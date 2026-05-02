@@ -33,8 +33,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -5 }}
+      whileTap={{ scale: 0.98 }}
       id={`product-card-${product.id}`}
-      className="bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-xl transition-all border border-beauty-soft group"
+      className="bg-white rounded-[40px] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ease-out border border-beauty-sand group cursor-pointer"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img

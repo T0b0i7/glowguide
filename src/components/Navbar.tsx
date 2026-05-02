@@ -1,14 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Sparkles, BookOpen, PlusCircle, BarChart3, Moon, Sun, Settings, Download, Upload, GitCompare } from 'lucide-react';
+import { Sparkles, BookOpen, PlusCircle, BarChart3, Settings, GitCompare } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useApp, useSettings } from '../context';
+import { useApp } from '../context';
 import { ExportImportModal } from './ExportImportModal';
 import { ComparisonTable } from './ComparisonTable';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
-  const { settings, updateSettings } = useSettings();
   const { state } = useApp();
   const [showExportImport, setShowExportImport] = React.useState(false);
   const [showComparison, setShowComparison] = React.useState(false);
@@ -19,30 +18,25 @@ export const Navbar: React.FC = () => {
     { name: 'Ajouter', path: '/add', icon: PlusCircle },
   ];
 
-  const toggleDarkMode = () => {
-    updateSettings({ darkMode: !settings.darkMode });
-  };
-
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 bg-gray-900/80 backdrop-blur-md border-b border-beauty-soft border-gray-700 px-6 py-4 transition-colors">
+    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-beauty-sand px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
           <motion.div
             whileHover={{ rotate: 360 }}
             transition={{ duration: 0.5 }}
-            className="w-10 h-10 bg-gradient-to-br from-beauty-accent to-pink-500 rounded-full flex items-center justify-center shadow-lg"
+            className="w-10 h-10 bg-gradient-to-br from-beauty-accent to-beauty-bronze rounded-full flex items-center justify-center shadow-lg"
           >
             <Sparkles size={20} className="text-white" />
           </motion.div>
-          <span className="font-display text-2xl font-bold tracking-tight text-gray-900 text-white">
+          <span className="font-display text-2xl font-bold tracking-tight text-beauty-dark">
             GlowGuide
           </span>
         </Link>
 
         {/* Navigation */}
         <div className="flex items-center gap-2">
-          {/* Navigation items */}
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path;
@@ -53,8 +47,8 @@ export const Navbar: React.FC = () => {
                 to={item.path}
                 className={`relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-beauty-accent text-white shadow-md'
-                    : 'text-gray-600 text-gray-300 hover:bg-beauty-soft hover:bg-gray-800'
+                    ? 'bg-beauty-accent text-white shadow-md hover:scale-105'
+                    : 'text-beauty-text hover:bg-beauty-soft'
                 }`}
               >
                 <Icon size={18} />
@@ -64,11 +58,10 @@ export const Navbar: React.FC = () => {
           })}
 
           {/* Divider */}
-          <div className="w-px h-8 bg-gray-300 bg-gray-700 mx-2" />
+          <div className="w-px h-8 bg-beauty-sand mx-2" />
 
           {/* Action buttons */}
           <div className="flex items-center gap-2">
-            {/* Comparison */}
             {state.comparisonIds.length > 0 && (
               <motion.button
                 initial={{ scale: 0 }}
@@ -76,31 +69,20 @@ export const Navbar: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowComparison(true)}
-                className="relative px-4 py-2.5 bg-emerald-100 bg-emerald-900/30 text-emerald-700 text-emerald-300 rounded-xl font-semibold border-2 border-emerald-300 border-emerald-700 hover:bg-emerald-200 hover:bg-emerald-800/50 transition-all flex items-center gap-2"
+                className="px-4 py-2.5 bg-beauty-success/20 text-beauty-success rounded-xl font-semibold border-2 border-beauty-success hover:bg-beauty-success hover:text-white transition-all flex items-center gap-2"
               >
                 <GitCompare size={18} />
                 <span className="hidden sm:inline">Comparer</span>
-                <span className="w-5 h-5 bg-emerald-500 text-white rounded-full text-xs flex items-center justify-center">
+                <span className="w-5 h-5 bg-beauty-success text-white rounded-full text-xs flex items-center justify-center">
                   {state.comparisonIds.length}
                 </span>
               </motion.button>
             )}
 
-            {/* Dark mode toggle */}
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={toggleDarkMode}
-              className="p-2.5 rounded-xl bg-beauty-base bg-gray-800 text-gray-600 text-yellow-400 border border-beauty-soft border-gray-700 hover:bg-beauty-soft hover:bg-gray-700 transition-all"
-              title={settings.darkMode ? 'Mode clair' : 'Mode sombre'}
-            >
-              {settings.darkMode ? <Sun size={20} /> : <Moon size={20} />}
-            </motion.button>
-
-            {/* Settings / Export */}
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setShowExportImport(true)}
-              className="p-2.5 rounded-xl bg-beauty-base bg-gray-800 text-gray-600 text-gray-300 border border-beauty-soft border-gray-700 hover:bg-beauty-soft hover:bg-gray-700 transition-all"
+              className="p-2.5 rounded-xl bg-beauty-soft text-beauty-text border border-beauty-sand hover:bg-beauty-ecru hover:border-beauty-accent transition-all"
               title="Exporter / Importer"
             >
               <Settings size={20} />
@@ -109,7 +91,6 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Modals */}
       <ExportImportModal
         isOpen={showExportImport}
         onClose={() => setShowExportImport(false)}

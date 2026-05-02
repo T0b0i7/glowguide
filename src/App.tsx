@@ -27,7 +27,7 @@ function AppContent() {
       <ThemeController />
       <Navbar />
       <OfflineIndicator />
-      <main className="py-6">
+      <main className="py-12">
         <AnimatePresence mode="wait">
           <Routes>
             <Route path="/" element={<ProductList />} />
@@ -41,8 +41,8 @@ function AppContent() {
 
       <UndoRedoBar />
 
-      <footer className="py-12 mt-20 border-t border-beauty-soft border-gray-700 text-center">
-        <p className="text-gray-400 text-gray-500 text-sm font-medium">
+      <footer className="py-12 mt-20 border-t border-beauty-sand text-center">
+        <p className="text-beauty-text/60 text-sm font-medium">
           Conçu pour les Professionnels de la Beauté &bull; GlowGuide &copy; {new Date().getFullYear()}
         </p>
       </footer>
@@ -57,7 +57,7 @@ export default function App() {
         <AppProvider>
           <ToastProvider>
             <Router>
-              <div className="min-h-screen bg-beauty-base bg-gray-900 selection:bg-beauty-soft selection:text-beauty-accent transition-colors">
+              <div className="min-h-screen selection:bg-beauty-ecru selection:text-beauty-accent">
                 <AppContent />
               </div>
             </Router>
