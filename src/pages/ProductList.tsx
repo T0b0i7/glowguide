@@ -34,11 +34,11 @@ export const ProductList: React.FC = () => {
         (filters.priceMax === null || product.price <= filters.priceMax);
 
       // Favorites only
-      const matchesFavorite = !filters.favoritesOnly || product.is_favorite;
+      const matchesFavorite = !filters.favoritesOnly || product.isFavorite;
 
       // Learning status
       const matchesStatus = filters.learningStatus === 'Tous' ||
-        product.learning_status === filters.learningStatus;
+        product.learningStatus === filters.learningStatus;
 
       // Tags
       const matchesTags = filters.tags.length === 0 ||
@@ -63,9 +63,9 @@ export const ProductList: React.FC = () => {
     }, 300);
   };
 
-  const masteredCount = products.filter(p => p.learning_status === 'maîtrisé').length;
-  const learningCount = products.filter(p => p.learning_status === 'en-cours').length;
-  const favoriteCount = products.filter(p => p.is_favorite).length;
+  const masteredCount = products.filter(p => p.learningStatus === 'maîtrisé').length;
+  const learningCount = products.filter(p => p.learningStatus === 'en-cours').length;
+  const favoriteCount = products.filter(p => p.isFavorite).length;
 
   if (loading) {
     return (
