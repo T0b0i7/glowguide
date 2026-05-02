@@ -1,38 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { Settings, X, Save, Palette } from 'lucide-react';
+import { Settings, X, Save, Palette, Loader2 } from 'lucide-react';
+
+import { useSettings, useApp } from '../context';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-interface AppSettings {
-  catalogName: string;
-  darkMode: boolean;
-  language: 'fr' | 'en';
-  itemsPerPage: number;
-}
-
-const DEFAULT_SETTINGS: AppSettings = {
-  catalogName: 'GlowGuide',
-  darkMode: false,
-  language: 'fr',
-  itemsPerPage: 12
-};
-
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-  const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
+  const { settings, updateSettings } = useSettings();
+  const [localSettings, setLocalSettings] = useState(settings);
   const [isSaving, setIsSaving] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem('glowguide-settings');
-    if (saved) {
-      setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(saved) });
-    }
-  }, []);
+    setLocalSettings(settings);
+  }, [settings]);
 
   useEffect(() => {
     if (isOpen) {
@@ -45,14 +31,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
     };
   }, [isOpen]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    localStorage.setItem('glowguide-settings', JSON.stringify(settings));
-    setTimeout(() => {
+    try {
+      updateSettings(localSettings);
+      setTimeout(() => {
+        setIsSaving(false);
+        onClose();
+      }, 500);
+    } catch (error) {
+      console.error('Failed to save settings:', error);
       setIsSaving(false);
-      onClose();
-      window.location.reload();
-    }, 500);
+    }
   };
 
   const modalContent = (
@@ -77,11 +67,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             onClick={(e) => e.stopPropagation()}
             className="bg-white rounded-[32px] shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden border border-beauty-sand"
-            style={{
-              position: 'relative',
-              marginTop: 'auto',
-              marginBottom: 'auto'
-            }}
           >
             {/* Header */}
             <div className="px-8 py-6 border-b border-beauty-sand bg-gradient-to-r from-beauty-soft/50 to-transparent flex justify-between items-center">
@@ -112,8 +97,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 </label>
                 <input
                   type="text"
-                  value={settings.catalogName}
-                  onChange={(e) => setSettings({ ...settings, catalogName: e.target.value })}
+                  value={localSettings.catalogName}
+                  onChange={(e) => setLocalSettings({ ...localSettings, catalogName: e.target.value })}
                   className="w-full px-5 py-4 bg-beauty-soft border border-beauty-sand rounded-2xl focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 focus:border-beauty-accent text-beauty-dark font-semibold text-lg transition-all"
                   placeholder="Nom de votre catalogue"
                 />
@@ -125,8 +110,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   Langue
                 </label>
                 <select
-                  value={settings.language}
-                  onChange={(e) => setSettings({ ...settings, language: e.target.value as 'fr' | 'en' })}
+                  value={localSettings.language}
+                  onChange={(e) => setLocalSettings({ ...localSettings, language: e.target.value as 'fr' | 'en' })}
                   className="w-full px-5 py-4 bg-beauty-soft border border-beauty-sand rounded-2xl focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 focus:border-beauty-accent text-beauty-text transition-all"
                 >
                   <option value="fr">Français</option>
@@ -140,8 +125,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                   Produits par page
                 </label>
                 <select
-                  value={settings.itemsPerPage}
-                  onChange={(e) => setSettings({ ...settings, itemsPerPage: parseInt(e.target.value) })}
+                  value={localSettings.itemsPerPage}
+                  onChange={(e) => setLocalSettings({ ...localSettings, itemsPerPage: parseInt(e.target.value) })}
                   className="w-full px-5 py-4 bg-beauty-soft border border-beauty-sand rounded-2xl focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 focus:border-beauty-accent text-beauty-text transition-all"
                 >
                   <option value="8">8 produits</option>
@@ -166,7 +151,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 className="px-6 py-3 rounded-2xl bg-beauty-accent text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
               >
                 {isSaving ? (
-                  <>...</>
+                  <Loader2 className="animate-spin" size={18} />
                 ) : (
                   <>
                     <Save size={18} />
@@ -186,17 +171,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
 // Hook to get catalog name
 export const useCatalogName = () => {
-  const [catalogName, setCatalogName] = useState('GlowGuide');
-
-  useEffect(() => {
-    const saved = localStorage.getItem('glowguide-settings');
-    if (saved) {
-      const settings = JSON.parse(saved);
-      if (settings.catalogName) {
-        setCatalogName(settings.catalogName);
-      }
-    }
-  }, []);
-
-  return catalogName;
+  const { settings } = useSettings();
+  return settings.catalogName || 'GlowGuide';
 };

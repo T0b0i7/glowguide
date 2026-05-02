@@ -8,7 +8,6 @@ import { Dashboard } from './pages/Dashboard';
 import { AppProvider, useSettings } from './context';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { HistoryProvider } from './context/HistoryContext';
-import { ToastProvider } from './context/ToastContext';
 import { AnimatePresence } from 'motion/react';
 import { ThemeController } from './components/ThemeController';
 import { UndoRedoBar } from './components/UndoRedoBar';
@@ -55,15 +54,14 @@ export default function App() {
     <NotificationProvider>
       <HistoryProvider>
         <AppProvider>
-          <ToastProvider>
-            <Router>
-              <div className="min-h-screen selection:bg-beauty-ecru selection:text-beauty-accent">
-                <AppContent />
-              </div>
-            </Router>
-          </ToastProvider>
+          <Router>
+            <div className="min-h-screen selection:bg-beauty-ecru selection:text-beauty-accent">
+              <AppContent />
+            </div>
+          </Router>
         </AppProvider>
       </HistoryProvider>
     </NotificationProvider>
   );
+
 }

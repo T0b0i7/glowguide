@@ -4,7 +4,6 @@ import { Heart, ChevronRight, Bookmark, Trash, Edit3 } from 'lucide-react';
 import { Product } from '../types';
 import { motion } from 'motion/react';
 import { useProducts } from '../context/ProductContext';
-import { useToast } from '../context/ToastContext';
 import { ConfirmDialog } from './ConfirmDialog';
 
 interface ProductCardProps {
@@ -14,16 +13,14 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
   const { toggleFavorite, deleteProduct } = useProducts();
-  const toast = useToast();
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleDelete = async () => {
     try {
       await deleteProduct(product.id);
-      toast.success('Produit supprimé avec succès');
       setShowConfirm(false);
     } catch (error) {
-      toast.error('Erreur lors de la suppression du produit');
+      console.error('Delete failed:', error);
       setShowConfirm(false);
     }
   };

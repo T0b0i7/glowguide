@@ -7,6 +7,7 @@ const TAGS_KEY = 'glowguide-tags';
 const TEMPLATES_KEY = 'glowguide-templates';
 
 export interface AppSettings {
+  catalogName: string;
   darkMode: boolean;
   language: 'fr' | 'en';
   itemsPerPage: number;
@@ -70,6 +71,7 @@ class StorageService {
 
   static getDefaultSettings(): AppSettings {
     return {
+      catalogName: 'GlowGuide',
       darkMode: false,
       language: 'fr',
       itemsPerPage: 12,

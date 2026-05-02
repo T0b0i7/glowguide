@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useReducer, useCallback, ReactNode, useEffect, useState } from 'react';
-import { Product } from '../types';
+import { Product, SupabaseProduct } from '../types';
 import StorageService, { AppSettings, HistoryAction, ProductTemplate, Tag } from '../services/storageService';
 import { productService } from '../services/productService';
+import { settingsService } from '../services/settingsService';
 import { useNotifications } from '../contexts/NotificationContext';
 import { produce } from 'immer';
 
@@ -34,7 +35,7 @@ type Action =
   | { type: 'UPDATE_PRODUCT'; payload: Product }
   | { type: 'DELETE_PRODUCT'; payload: string }
   | { type: 'TOGGLE_FAVORITE'; payload: { id: string; isFavorite: boolean } }
-  | { type: 'BULK_UPDATE'; payload: { ids: string; updates: Partial<Product> } }
+  | { type: 'BULK_UPDATE'; payload: { ids: string[]; updates: Partial<Product> } }
   | { type: 'BULK_DELETE'; payload: string[] }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
@@ -297,7 +298,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           type: 'LOAD_STATE',
           payload: {
             products,
-            settings,
+            settings: { ...settings, ...(await settingsService.getSettings()) },
             tags,
             templates,
             history: history.slice(-50) // Keep last 50
@@ -320,7 +321,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   useEffect(() => {
     StorageService.saveSettings(state.settings);
-  }, [state.settings]);
+    settingsService.updateSettings(state.settings).catch(err => {
+      console.warn('Failed to sync settings to DB:', err);
+    });
+  }, [state.settings.catalogName]);
 
   useEffect(() => {
     StorageService.saveTags(state.tags);
@@ -435,7 +439,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, [state.products, notify, recordAction]);
 
-  const bulkUpdate = useCallback(async (ids: string[], updates: Partial<SupabaseProduct>) => {
+  const bulkUpdate = useCallback(async (ids: string[], updates: Partial<Product>) => {
     const previousState = state.products
       .filter(p => ids.includes(p.id))
       .reduce((acc, p) => ({ ...acc, [p.id]: { ...p } }), {});
@@ -461,7 +465,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     notify.info('Redo', 'Fonctionnalité à venir');
   }, [notify]);
 
-  const applyTemplate = useCallback((templateId: string, overrides?: Partial<SupabaseProduct>): Partial<SupabaseProduct> => {
+  const applyTemplate = useCallback((templateId: string, overrides?: Partial<Product>): Partial<Product> => {
     const template = state.templates.find(t => t.id === templateId);
     if (!template) return {};
 

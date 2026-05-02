@@ -1,24 +1,45 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, AlertCircle, Info, Edit3, Heart, Target, Sparkles, Save, X, Camera } from 'lucide-react';
-import { motion } from 'motion/react';
-import { Product } from '../types';
+import { ArrowLeft, CheckCircle2, AlertCircle, Info, Edit3, Heart, Target, Sparkles, Save, X, Camera, Share2, Trash2, Loader2, Copy, MessageCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Product, SupabaseProduct } from '../types';
 import { useProducts } from '../context';
-import { useToast } from '../context/ToastContext';
 import { imageService } from '../services/imageService';
+import { productService } from '../services/productService';
+import { ConfirmDialog } from '../components/ConfirmDialog';
+import { useNotifications } from '../contexts/NotificationContext';
+
+const DetailSection: React.FC<{ icon: React.ReactNode; title: string; content: string }> = ({ icon, title, content }) => (
+  <motion.div
+    whileHover={{ y: -5 }}
+    className="bg-white p-6 sm:p-8 rounded-[32px] border border-beauty-soft shadow-sm"
+  >
+    <div className="flex items-center gap-3 mb-4">
+      {icon}
+      <h3 className="font-display text-xl sm:text-2xl font-bold">{title}</h3>
+    </div>
+    <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{content}</p>
+  </motion.div>
+);
+
+interface FormDataType extends Partial<Omit<Product, 'keyPoints'>> {
+  keyPoints?: string;
+}
 
 export const ProductDetailsView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<SupabaseProduct | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<Partial<Product>>({});
+  const [formData, setFormData] = useState<FormDataType>({});
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const { toggleFavorite, updateProduct } = useProducts();
-  const toast = useToast();
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const { toggleFavorite, updateProduct, deleteProduct } = useProducts();
+  const notify = useNotifications();
 
   useEffect(() => {
     if (!id) return;
@@ -36,11 +57,11 @@ export const ProductDetailsView: React.FC = () => {
             ingredients: p.ingredients || '',
             benefits: p.benefits || '',
             usage: p.usage || '',
-            targetSkin: p.target_skin || '',
+            targetSkin: p.targetSkin || '',
             contraindications: p.contraindications || '',
-            keyPoints: Array.isArray(p.key_points) ? p.key_points.join('\n') : '',
+            keyPoints: Array.isArray(p.keyPoints) ? p.keyPoints.join('\n') : '',
             notes: p.notes || '',
-            imageUrl: p.image_url
+            imageUrl: p.imageUrl
           });
         }
       })
@@ -65,11 +86,11 @@ export const ProductDetailsView: React.FC = () => {
         ingredients: product.ingredients || '',
         benefits: product.benefits || '',
         usage: product.usage || '',
-        targetSkin: product.target_skin || '',
+        targetSkin: product.targetSkin || '',
         contraindications: product.contraindications || '',
-        keyPoints: Array.isArray(product.key_points) ? product.key_points.join('\n') : '',
+        keyPoints: Array.isArray(product.keyPoints) ? product.keyPoints.join('\n') : '',
         notes: product.notes || '',
-        imageUrl: product.image_url
+        imageUrl: product.imageUrl
       });
     }
   };
@@ -85,18 +106,48 @@ export const ProductDetailsView: React.FC = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target as HTMLInputElement;
+    const finalValue = type === 'number' ? (value === '' ? 0 : parseFloat(value)) : value;
+    setFormData(prev => ({ ...prev, [name]: finalValue }));
   };
 
   const handleToggleFavorite = async () => {
     if (!product) return;
     try {
       await toggleFavorite(product.id);
-      toast.success(product.is_favorite ? 'Retiré des favoris' : 'Ajouté aux favoris');
+      // Notification is handled by AppContext
     } catch (error) {
-      toast.error('Erreur lors du changement de favori');
+      notify.error('Erreur', 'Impossible de changer le favori');
     }
+  };
+
+  const handleDelete = async () => {
+    if (!product) return;
+    try {
+      await deleteProduct(product.id);
+      navigate('/');
+    } catch (error) {
+      notify.error('Erreur', 'Impossible de supprimer le produit');
+    }
+  };
+
+  const handleShare = (platform: 'whatsapp' | 'facebook' | 'copy') => {
+    const url = window.location.href;
+    const text = `Découvrez ${product?.name} de ${product?.brand} sur GlowGuide !`;
+    
+    switch (platform) {
+      case 'whatsapp':
+        window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+        break;
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(url);
+        notify.success('Copié !', 'Lien copié dans le presse-papier');
+        break;
+    }
+    setShowShareMenu(false);
   };
 
    const handleSubmitEdit = async (e: React.FormEvent) => {
@@ -104,14 +155,13 @@ export const ProductDetailsView: React.FC = () => {
     if (!id || !product) return;
 
     setIsUploading(true);
-    let imageUrl = product.image_url || '';
+    let imageUrl = product.imageUrl || '';
 
     if (selectedImage) {
       try {
         imageUrl = await imageService.upload(selectedImage, crypto.randomUUID());
       } catch (err) {
         console.warn('Upload échoué, conservation de l\'image existante:', err);
-        toast.warning('Upload image échoué, image existante conservée');
       }
     }
 
@@ -125,25 +175,28 @@ export const ProductDetailsView: React.FC = () => {
         ingredients: formData.ingredients,
         benefits: formData.benefits,
         usage: formData.usage,
-        targetSkin: formData.target_skin,
+        targetSkin: formData.targetSkin,
         contraindications: formData.contraindications,
-        keyPoints: Array.isArray(formData.key_points)
-          ? formData.key_points
-          : (typeof formData.key_points === 'string' ? (formData.key_points as string).split('\n').filter(p => p.trim()) : []),
+        keyPoints: Array.isArray(formData.keyPoints)
+          ? formData.keyPoints
+          : (typeof formData.keyPoints === 'string' ? (formData.keyPoints as string).split('\n').filter(p => p.trim()) : []),
         notes: formData.notes,
         imageUrl: imageUrl
       };
 
       await updateProduct(id, updates);
       const updated = await productService.getById(id);
-      setProduct(updated);
-      setFormData(updated);
+      if (updated) {
+        setProduct(updated);
+        setFormData({
+          ...updated,
+          keyPoints: Array.isArray(updated.keyPoints) ? updated.keyPoints.join('\n') : ''
+        });
+      }
       setIsEditing(false);
       setSelectedImage(null);
-      toast.success('Produit mis à jour avec succès');
     } catch (error) {
       console.error('Erreur:', error);
-      toast.error('Erreur lors de la mise à jour');
     } finally {
       setIsUploading(false);
     }
@@ -326,7 +379,7 @@ export const ProductDetailsView: React.FC = () => {
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Points Clés (Un par ligne)</label>
               <textarea
                 name="keyPoints"
-                value={Array.isArray(formData.keyPoints) ? formData.keyPoints.join('\n') : (formData.keyPoints || '')}
+                value={formData.keyPoints || ''}
                 onChange={handleInputChange}
                 rows={3}
                 className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-beauty-base border border-beauty-soft rounded-2xl focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 transition-all text-sm sm:text-base"
@@ -351,14 +404,14 @@ export const ProductDetailsView: React.FC = () => {
               onClick={handleCancelEdit}
               className="px-6 sm:px-8 py-3 sm:py-4 rounded-2xl bg-white text-gray-600 font-bold border border-beauty-soft hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm sm:text-base"
             >
-              <X size={18} sm:size={20} /> Annuler
+              <X size={20} /> Annuler
             </button>
             <button
               type="submit"
               disabled={isUploading}
               className="px-6 sm:px-10 py-3 sm:py-4 rounded-2xl bg-beauty-accent text-white font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50 text-sm sm:text-base"
             >
-              <Save size={18} sm:size={20} /> {isUploading ? 'Enregistrement...' : 'Enregistrer'}
+              <Save size={20} /> {isUploading ? 'Enregistrement...' : 'Enregistrer'}
             </button>
           </div>
         </form>
@@ -385,14 +438,14 @@ export const ProductDetailsView: React.FC = () => {
         >
            <div className="relative aspect-square rounded-[40px] overflow-hidden shadow-lg border border-beauty-soft">
              <img
-               src={product.image_url}
+               src={product.imageUrl}
                alt={product.name}
                className="w-full h-full object-cover"
              />
             <div className={`absolute top-4 sm:top-6 left-4 px-3 sm:px-4 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest ${
-              product.learning_status === 'maîtrisé' ? 'bg-beauty-muted text-gray-700' : 'bg-beauty-soft text-beauty-accent'
+              product.learningStatus === 'maîtrisé' ? 'bg-beauty-muted text-gray-700' : 'bg-beauty-soft text-beauty-accent'
             }`}>
-              {product.learning_status?.replace('-', ' ')}
+              {product.learningStatus?.replace('-', ' ')}
             </div>
           </div>
         </motion.div>
@@ -408,13 +461,46 @@ export const ProductDetailsView: React.FC = () => {
                 <h1 className="font-display text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">{product.name}</h1>
               </div>
               <div className="flex gap-2">
+                <div className="relative">
+                  <button 
+                    className="p-2 sm:p-3 rounded-full bg-white border border-beauty-soft text-beauty-accent shadow-sm hover:scale-110 transition-transform"
+                    onClick={() => setShowShareMenu(!showShareMenu)}>
+                    <Share2 size={24} />
+                  </button>
+                  
+                  <AnimatePresence>
+                    {showShareMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-beauty-sand z-50 p-2 overflow-hidden"
+                      >
+                        <button onClick={() => handleShare('whatsapp')} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-beauty-soft rounded-xl transition-colors text-gray-700 font-medium text-sm">
+                          <MessageCircle size={18} className="text-emerald-500" /> WhatsApp
+                        </button>
+                        <button onClick={() => handleShare('facebook')} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-beauty-soft rounded-xl transition-colors text-gray-700 font-medium text-sm">
+                          <span className="w-[18px] h-[18px] bg-blue-600 rounded flex items-center justify-center text-white text-[10px] font-bold">f</span> Facebook
+                        </button>
+                        <button onClick={() => handleShare('copy')} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-beauty-soft rounded-xl transition-colors text-gray-700 font-medium text-sm border-t border-beauty-sand mt-1">
+                          <Copy size={18} className="text-gray-400" /> Copier le lien
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                
                 <button className="p-2 sm:p-3 rounded-full bg-white border border-beauty-soft text-beauty-accent shadow-sm hover:scale-110 transition-transform"
                   onClick={handleEdit}>
-                  <Edit3 size={20} sm:size={24} />
+                  <Edit3 size={24} />
                 </button>
                 <button className="p-2 sm:p-3 rounded-full bg-white border border-beauty-soft text-beauty-accent shadow-sm hover:scale-110 transition-transform"
                   onClick={handleToggleFavorite}>
-                  <Heart size={20} sm:size={24} fill={product.is_favorite ? 'currentColor' : 'none'} />
+                  <Heart size={24} fill={product.isFavorite ? 'currentColor' : 'none'} />
+                </button>
+                <button className="p-2 sm:p-3 rounded-full bg-white border border-beauty-soft text-red-500 shadow-sm hover:scale-110 transition-transform hover:bg-red-50"
+                  onClick={() => setShowDeleteConfirm(true)}>
+                  <Trash2 size={24} />
                 </button>
               </div>
             </div>
@@ -437,37 +523,37 @@ export const ProductDetailsView: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
         <DetailSection
-          icon={<Sparkles className="text-beauty-accent" size={20} sm:size={24} />}
+          icon={<Sparkles className="text-beauty-accent" size={24} />}
           title="Bénéfices"
           content={product.benefits}
         />
         <DetailSection
-          icon={<Info className="text-blue-400" size={20} sm:size={24} />}
+          icon={<Info className="text-blue-400" size={24} />}
           title="Ingrédients"
           content={product.ingredients}
         />
         <DetailSection
-          icon={<Edit3 className="text-purple-400" size={20} sm:size={24} />}
+          icon={<Edit3 className="text-purple-400" size={24} />}
           title="Utilisation"
           content={product.usage}
         />
         <DetailSection
-          icon={<Target className="text-orange-400" size={20} sm:size={24} />}
+          icon={<Target className="text-orange-400" size={24} />}
           title="Type de Peau"
-          content={product.target_skin}
+          content={product.targetSkin}
         />
         <DetailSection
-          icon={<AlertCircle className="text-red-400" size={20} sm:size={24} />}
+          icon={<AlertCircle className="text-red-400" size={24} />}
           title="Contre-indications"
           content={product.contraindications}
         />
         <div className="bg-white p-6 sm:p-8 rounded-[32px] border border-beauty-soft shadow-sm col-span-full md:col-span-1">
           <div className="flex items-center gap-3 mb-4">
-            <CheckCircle2 size={20} sm:size={24} className="text-beauty-muted fill-beauty-muted text-gray-700" />
+            <CheckCircle2 size={24} className="text-beauty-muted fill-beauty-muted text-gray-700" />
             <h3 className="font-display text-xl sm:text-2xl font-bold">Points Clés</h3>
           </div>
           <ul className="space-y-3">
-            {product.key_points?.map((point, i) => (
+            {product.keyPoints?.map((point, i) => (
               <li key={i} className="flex items-start gap-3 text-gray-600 text-sm sm:text-base">
                 <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-beauty-accent flex-shrink-0" />
                 {point}
@@ -485,19 +571,17 @@ export const ProductDetailsView: React.FC = () => {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={showDeleteConfirm}
+        title="Supprimer le produit ?"
+        message={`Êtes-vous sûr de vouloir supprimer "${product.name}" ? Cette action est irréversible.`}
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 };
 
-const DetailSection: React.FC<{ icon: React.ReactNode; title: string; content: string }> = ({ icon, title, content }) => (
-  <motion.div
-    whileHover={{ y: -5 }}
-    className="bg-white p-6 sm:p-8 rounded-[32px] border border-beauty-soft shadow-sm"
-  >
-    <div className="flex items-center gap-3 mb-4">
-      {icon}
-      <h3 className="font-display text-xl sm:text-2xl font-bold">{title}</h3>
-    </div>
-    <p className="text-gray-600 leading-relaxed text-sm sm:text-base">{content}</p>
-  </motion.div>
-);

@@ -29,18 +29,40 @@ const mapProduct = (data: any): Product => ({
 });
 
 // Map UI input (camelCase) to Supabase (snake_case)
-const toSupabase = (data: Partial<Product>): any => ({
-  ...data,
-  target_skin: data.targetSkin,
-  key_points: data.keyPoints,
-  is_favorite: data.isFavorite,
-  learning_status: data.learningStatus,
-  image_url: data.imageUrl,
-  created_at: data.createdAt,
-  updated_at: data.updatedAt,
-  created_by: data.createdBy,
-  updated_by: data.updatedBy
-});
+const toSupabase = (data: Partial<Product>): any => {
+  const result: any = {
+    name: data.name,
+    brand: data.brand,
+    category: data.category,
+    price: data.price,
+    summary: data.summary,
+    ingredients: data.ingredients,
+    benefits: data.benefits,
+    usage: data.usage,
+    target_skin: data.targetSkin,
+    contraindications: data.contraindications,
+    key_points: data.keyPoints,
+    notes: data.notes,
+    is_favorite: data.isFavorite,
+    learning_status: data.learningStatus,
+    image_url: data.imageUrl,
+    tags: data.tags,
+    created_at: data.createdAt,
+    updated_at: data.updatedAt,
+    created_by: data.createdBy,
+    updated_by: data.updatedBy
+  };
+
+  // Remove undefined fields
+  Object.keys(result).forEach(key => {
+    if (result[key] === undefined) {
+      delete result[key];
+    }
+  });
+
+  return result;
+};
+
 
 export const productService = {
   async getAll(): Promise<Product[]> {

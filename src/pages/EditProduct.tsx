@@ -3,14 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Save, X, Camera } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useProducts } from '../context/ProductContext';
-import { useToast } from '../context/ToastContext';
 import { imageService } from '../services/imageService';
+import { useNotifications } from '../contexts/NotificationContext';
 
 export const EditProduct: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products, updateProduct } = useProducts();
-  const toast = useToast();
+  const notify = useNotifications();
   const [formData, setFormData] = useState({
     name: '',
     brand: '',
@@ -66,7 +66,7 @@ export const EditProduct: React.FC = () => {
         imageUrl = await imageService.upload(selectedImage, crypto.randomUUID());
       } catch (error) {
         console.warn('Upload échoué, conservation de l\'image existante:', error);
-        toast.warning('Upload image échoué, image existante conservée');
+        notify.warning('Upload échoué', 'Image existante conservée');
       }
       setIsUploading(false);
     }
@@ -88,18 +88,18 @@ export const EditProduct: React.FC = () => {
           notes: formData.notes,
           imageUrl: imageUrl
         });
-        toast.success('Produit mis à jour avec succès');
         navigate(`/product/${id}`);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      toast.error('Erreur lors de la mise à jour du produit');
+      notify.error('Erreur', 'Impossible de mettre à jour le produit');
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target as HTMLInputElement;
+    const finalValue = type === 'number' ? (value === '' ? 0 : parseFloat(value)) : value;
+    setFormData(prev => ({ ...prev, [name]: finalValue }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -289,14 +289,14 @@ export const EditProduct: React.FC = () => {
             onClick={() => navigate(-1)}
             className="px-6 sm:px-8 py-3 sm:py-4 rounded-2xl bg-white text-gray-600 font-bold border border-beauty-soft hover:bg-gray-50 transition-colors flex items-center gap-2 text-sm sm:text-base"
           >
-            <X size={18} sm:size={20} /> Annuler
+            <X size={20} /> Annuler
           </button>
           <button
             type="submit"
             disabled={isUploading}
             className="px-6 sm:px-10 py-3 sm:py-4 rounded-2xl bg-beauty-accent text-white font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50 text-sm sm:text-base"
           >
-            <Save size={18} sm:size={20} /> {isUploading ? 'Mise à jour...' : 'Enregistrer'}
+            <Save size={20} /> {isUploading ? 'Mise à jour...' : 'Enregistrer'}
           </button>
         </div>
       </form>
