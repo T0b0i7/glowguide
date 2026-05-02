@@ -10,35 +10,68 @@ import { imageService } from '../services/imageService';
 export const ProductDetailsView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, toggleFavorite, updateProduct } = useProducts();
-  const product = products.find(p => p.id === id) || null;
-  const [loading, setLoading] = useState(!product);
+  const [product, setProduct] = useState<SupabaseProduct | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<Product>>({});
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const { toggleFavorite, updateProduct } = useProducts();
   const toast = useToast();
 
   useEffect(() => {
-    if (product) {
-      setFormData(product);
-      setImagePreview(product.imageUrl || null);
-      setLoading(false);
-    }
-  }, [product]);
+    if (!id) return;
+    productService.getById(id)
+      .then(p => {
+        setProduct(p);
+        // Convert SupabaseProduct (snake_case) to Product (camelCase) for form
+        if (p) {
+          setFormData({
+            name: p.name,
+            brand: p.brand,
+            category: p.category,
+            price: p.price,
+            summary: p.summary || '',
+            ingredients: p.ingredients || '',
+            benefits: p.benefits || '',
+            usage: p.usage || '',
+            targetSkin: p.target_skin || '',
+            contraindications: p.contraindications || '',
+            keyPoints: Array.isArray(p.key_points) ? p.key_points.join('\n') : '',
+            notes: p.notes || '',
+            imageUrl: p.image_url
+          });
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [id]);
 
   const handleEdit = () => {
-    if (product) {
-      setFormData(product);
-      setImagePreview(product.imageUrl || null);
-      setIsEditing(true);
-    }
+    setIsEditing(true);
   };
 
   const handleCancelEdit = () => {
     setIsEditing(false);
     setSelectedImage(null);
+    if (product) {
+      setFormData({
+        name: product.name,
+        brand: product.brand,
+        category: product.category,
+        price: product.price,
+        summary: product.summary || '',
+        ingredients: product.ingredients || '',
+        benefits: product.benefits || '',
+        usage: product.usage || '',
+        targetSkin: product.target_skin || '',
+        contraindications: product.contraindications || '',
+        keyPoints: Array.isArray(product.key_points) ? product.key_points.join('\n') : '',
+        notes: product.notes || '',
+        imageUrl: product.image_url
+      });
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,18 +93,18 @@ export const ProductDetailsView: React.FC = () => {
     if (!product) return;
     try {
       await toggleFavorite(product.id);
-      toast.success(product.isFavorite ? 'Retiré des favoris' : 'Ajouté aux favoris');
+      toast.success(product.is_favorite ? 'Retiré des favoris' : 'Ajouté aux favoris');
     } catch (error) {
       toast.error('Erreur lors du changement de favori');
     }
   };
 
-  const handleSubmitEdit = async (e: React.FormEvent) => {
+   const handleSubmitEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id || !product) return;
 
     setIsUploading(true);
-    let imageUrl = product.imageUrl;
+    let imageUrl = product.image_url || '';
 
     if (selectedImage) {
       try {
@@ -83,7 +116,7 @@ export const ProductDetailsView: React.FC = () => {
     }
 
     try {
-      const updates: Partial<SupabaseProduct> = {
+      const updates: Partial<Product> = {
         name: formData.name,
         brand: formData.brand,
         category: formData.category,
@@ -92,9 +125,9 @@ export const ProductDetailsView: React.FC = () => {
         ingredients: formData.ingredients,
         benefits: formData.benefits,
         usage: formData.usage,
-        target_skin: formData.target_skin,
+        targetSkin: formData.target_skin,
         contraindications: formData.contraindications,
-        key_points: Array.isArray(formData.key_points)
+        keyPoints: Array.isArray(formData.key_points)
           ? formData.key_points
           : (typeof formData.key_points === 'string' ? (formData.key_points as string).split('\n').filter(p => p.trim()) : []),
         notes: formData.notes,
@@ -266,16 +299,16 @@ export const ProductDetailsView: React.FC = () => {
                   className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-beauty-base border border-beauty-soft rounded-2xl focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 transition-all text-sm sm:text-base"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Type de Peau Cible</label>
-                <textarea
-                  name="target_skin"
-                  value={formData.target_skin || ''}
-                  onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-beauty-base border border-beauty-soft rounded-2xl focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 transition-all text-sm sm:text-base"
-                />
-              </div>
+               <div className="space-y-2">
+                 <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Type de Peau Cible</label>
+                 <textarea
+                   name="targetSkin"
+                   value={formData.targetSkin || ''}
+                   onChange={handleInputChange}
+                   rows={4}
+                   className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-beauty-base border border-beauty-soft rounded-2xl focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 transition-all text-sm sm:text-base"
+                 />
+               </div>
             </div>
 
             <div className="space-y-2">
@@ -292,8 +325,8 @@ export const ProductDetailsView: React.FC = () => {
             <div className="space-y-2">
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Points Clés (Un par ligne)</label>
               <textarea
-                name="key_points"
-                value={Array.isArray(formData.key_points) ? formData.key_points.join('\n') : formData.key_points || ''}
+                name="keyPoints"
+                value={Array.isArray(formData.keyPoints) ? formData.keyPoints.join('\n') : (formData.keyPoints || '')}
                 onChange={handleInputChange}
                 rows={3}
                 className="w-full px-4 sm:px-5 py-3 sm:py-4 bg-beauty-base border border-beauty-soft rounded-2xl focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 transition-all text-sm sm:text-base"
@@ -350,16 +383,16 @@ export const ProductDetailsView: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="w-full lg:w-1/3"
         >
-          <div className="relative aspect-square rounded-[40px] overflow-hidden shadow-lg border border-beauty-soft">
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="w-full h-full object-cover"
-            />
+           <div className="relative aspect-square rounded-[40px] overflow-hidden shadow-lg border border-beauty-soft">
+             <img
+               src={product.image_url}
+               alt={product.name}
+               className="w-full h-full object-cover"
+             />
             <div className={`absolute top-4 sm:top-6 left-4 px-3 sm:px-4 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest ${
-              product.learningStatus === 'maîtrisé' ? 'bg-beauty-muted text-gray-700' : 'bg-beauty-soft text-beauty-accent'
+              product.learning_status === 'maîtrisé' ? 'bg-beauty-muted text-gray-700' : 'bg-beauty-soft text-beauty-accent'
             }`}>
-              {product.learningStatus?.replace('-', ' ')}
+              {product.learning_status?.replace('-', ' ')}
             </div>
           </div>
         </motion.div>
@@ -381,7 +414,7 @@ export const ProductDetailsView: React.FC = () => {
                 </button>
                 <button className="p-2 sm:p-3 rounded-full bg-white border border-beauty-soft text-beauty-accent shadow-sm hover:scale-110 transition-transform"
                   onClick={handleToggleFavorite}>
-                  <Heart size={20} sm:size={24} fill={product.isFavorite ? 'currentColor' : 'none'} />
+                  <Heart size={20} sm:size={24} fill={product.is_favorite ? 'currentColor' : 'none'} />
                 </button>
               </div>
             </div>

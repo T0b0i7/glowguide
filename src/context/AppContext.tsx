@@ -259,7 +259,7 @@ interface AppContextType {
   dispatch: React.Dispatch<Action>;
   // Convenience methods
   refreshProducts: () => Promise<void>;
-  addProduct: (product: Omit<Product, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  addProduct: (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateProduct: (id: string, updates: Partial<Product>) => Promise<void>;
   deleteProduct: (id: string) => Promise<void>;
   toggleFavorite: (id: string) => Promise<void>;
@@ -352,7 +352,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, []);
 
-  const addProduct = useCallback(async (productData: Omit<SupabaseProduct, 'id' | 'created_at' | 'updated_at'>) => {
+  const addProduct = useCallback(async (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       const newProduct = await productService.create(productData);
       dispatch({ type: 'ADD_PRODUCT', payload: newProduct });
@@ -364,7 +364,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   }, [notify, recordAction]);
 
-  const updateProduct = useCallback(async (id: string, updates: Partial<SupabaseProduct>) => {
+  const updateProduct = useCallback(async (id: string, updates: Partial<Product>) => {
     const previous = state.products.find(p => p.id === id);
     if (!previous) return;
 
@@ -398,21 +398,21 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const product = state.products.find(p => p.id === id);
     if (!product) return;
 
-    const newFavorite = !product.is_favorite;
+    const previous = product.isFavorite;
+    const newValue = !previous;
+
     try {
-      await productService.toggleFavorite(id, newFavorite);
-      dispatch({ type: 'TOGGLE_FAVORITE', payload: { id, isFavorite: newFavorite } });
-      const action: HistoryAction = {
-        type: 'favorite',
+      const updated = await productService.toggleFavorite(id, newValue);
+      dispatch({ type: 'TOGGLE_FAVORITE', payload: { id, isFavorite: newValue } });
+      recordAction({
+        type: 'toggle_favorite',
         productId: id,
-        previousState: { is_favorite: product.is_favorite },
-        newState: { is_favorite: newFavorite },
-        timestamp: Date.now()
-      };
-      recordAction(action);
-      notify.favorite('Favoris', newFavorite ? 'Ajouté aux favoris' : 'Retiré des favoris');
+        previousState: { ...product, isFavorite: previous },
+        newState: { ...product, isFavorite: newValue }
+      });
+      notify.success('Favori', newValue ? 'Ajouté aux favoris' : 'Retiré des favoris');
     } catch (error) {
-      notify.error('Erreur', 'Impossible de modifier favori');
+      notify.error('Erreur', 'Impossible de modifier le favori');
       throw error;
     }
   }, [state.products, notify, recordAction]);

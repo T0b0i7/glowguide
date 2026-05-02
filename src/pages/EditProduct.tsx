@@ -82,11 +82,11 @@ export const EditProduct: React.FC = () => {
           ingredients: formData.ingredients,
           benefits: formData.benefits,
           usage: formData.usage,
-targetSkin: formData.targetSkin,
-        contraindications: formData.contraindications,
-        keyPoints: formData.keyPoints.split('\n').filter(p => p.trim()),
-        notes: formData.notes,
-        imageUrl: imageUrl
+          targetSkin: formData.targetSkin,
+          contraindications: formData.contraindications,
+          keyPoints: formData.keyPoints.split('\n').filter(p => p.trim()),
+          notes: formData.notes,
+          imageUrl: imageUrl
         });
         toast.success('Produit mis à jour avec succès');
         navigate(`/product/${id}`);
