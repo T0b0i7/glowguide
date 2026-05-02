@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hors Ligne - GlowGuide</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #fef7f0 0%, #fff7ed 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 6rem;
+      margin-bottom: 2rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #1f2937;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.125rem;
+      color: #6b7280;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      color: white;
+      border: none;
+      border-radius: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(217, 119, 6, 0.3);
+    }
+
+    .tips {
+      margin-top: 3rem;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .tips h2 {
+      font-size: 1.25rem;
+      color: #374151;
+      margin-bottom: 1rem;
+    }
+
+    .tips ul {
+      list-style: none;
+      text-align: left;
+    }
+
+    .tips li {
+      padding: 0.5rem 0;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tips li::before {
+      content: "✨";
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📱</div>
+    <h1>Vous êtes hors ligne</h1>
+    <p>
+      GlowGuide fonctionne en mode hors ligne !<br>
+      Vérifiez votre connexion Internet et réessayez.
+    </p>
+
+    <button class="button" onclick="window.location.reload()">
+      🔄 Réessayer
+    </button>
+
+    <div class="tips">
+      <h2>Astuce</h2>
+      <ul>
+        <li>Vos produits sont sauvegardés localement</li>
+        <li>Les modifications seront synchronisées automatiquement</li>
+        <li>Vous pouvez continuer à naviguer dans votre catalogue</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

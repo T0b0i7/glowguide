@@ -1,35 +1,63 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { ProductCard } from '../components/ProductCard';
-import { SearchBar } from '../components/SearchBar';
+import { AdvancedFilterBar } from '../components/AdvancedFilterBar';
+import { BulkActionBar } from '../components/BulkActionBar';
 import { motion } from 'motion/react';
-import { TrendingUp } from 'lucide-react';
-import { useProducts } from '../context/ProductContext';
+import { TrendingUp, Inbox, Search } from 'lucide-react';
+import { useProducts, useFilters } from '../context';
 
 export const ProductList: React.FC = () => {
   const { products, loading, error } = useProducts();
-  const [query, setQuery] = useState('');
-  const [category, setCategory] = useState('Tous');
-  const [sortBy, setSortBy] = useState('name');
+  const { filters } = useFilters();
 
-  const filteredProducts = products.filter(product => {
-    const matchesQuery = product.name.toLowerCase().includes(query.toLowerCase()) || 
-                         product.brand.toLowerCase().includes(query.toLowerCase());
-    const matchesCategory = category === 'Tous' || product.category === category;
-    return matchesQuery && matchesCategory;
-  }).sort((a, b) => {
-    if (sortBy === 'price-asc') return a.price - b.price;
-    if (sortBy === 'price-desc') return b.price - a.price;
-    if (sortBy === 'name') return a.name.localeCompare(b.name);
-    return 0;
-  });
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      // Search query
+      const matchesQuery = !filters.search ||
+        product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+        product.brand.toLowerCase().includes(filters.search.toLowerCase());
+
+      // Category
+      const matchesCategory = filters.category === 'Tous' || product.category === filters.category;
+
+      // Brand
+      const matchesBrand = !filters.brand ||
+        product.brand.toLowerCase().includes(filters.brand.toLowerCase());
+
+      // Price range
+      const matchesPrice = (filters.priceMin === null || product.price >= filters.priceMin) &&
+        (filters.priceMax === null || product.price <= filters.priceMax);
+
+      // Favorites only
+      const matchesFavorite = !filters.favoritesOnly || product.is_favorite;
+
+      // Learning status
+      const matchesStatus = filters.learningStatus === 'Tous' ||
+        product.learning_status === filters.learningStatus;
+
+      // Tags
+      const matchesTags = filters.tags.length === 0 ||
+        (product.tags && filters.tags.some(tagId => product.tags?.includes(tagId)));
+
+      return matchesQuery && matchesCategory && matchesBrand && matchesPrice &&
+             matchesFavorite && matchesStatus && matchesTags;
+    }).sort((a, b) => {
+      // Default sort by name
+      return a.name.localeCompare(b.name);
+    });
+  }, [products, filters]);
 
   const masteredCount = products.filter(p => p.learning_status === 'maîtrisé').length;
   const learningCount = products.filter(p => p.learning_status === 'en-cours').length;
+  const favoriteCount = products.filter(p => p.is_favorite).length;
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <p className="text-gray-500 font-medium">Chargement des produits...</p>
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-beauty-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500 dark:text-gray-400 font-medium">Chargement des produits...</p>
+        </div>
       </div>
     );
   }
@@ -37,7 +65,18 @@ export const ProductList: React.FC = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <p className="text-red-500 font-medium">Erreur: {error}</p>
+        <div className="text-center">
+          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-4xl">⚠️</span>
+          </div>
+          <p className="text-red-600 dark:text-red-400 font-bold text-lg">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-6 py-3 bg-beauty-accent text-white rounded-xl font-semibold hover:bg-opacity-90 transition-all"
+          >
+            Réessayer
+          </button>
+        </div>
       </div>
     );
   }
@@ -46,77 +85,82 @@ export const ProductList: React.FC = () => {
     <div id="product-list-page" className="max-w-7xl mx-auto px-6 py-10">
       <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="font-display text-5xl font-bold text-gray-900 mb-2"
+            className="font-display text-5xl font-bold text-gray-900 dark:text-white mb-2"
           >
             Catalogue Produits
           </motion.h1>
-          <p className="text-gray-500 font-medium">Explorez et gérez votre base de connaissances cosmétiques.</p>
-          <div className="flex items-center gap-4 mt-4">
-            <span className="px-3 py-1 bg-white rounded-lg text-sm font-medium border border-beauty-soft">
+          <p className="text-gray-600 dark:text-gray-400 font-medium">
+            Explorez et gérez votre base de connaissances cosmétiques.
+          </p>
+
+          {/* Stats */}
+          <div className="flex flex-wrap items-center gap-3 mt-4">
+            <span className="px-4 py-2 bg-white dark:bg-gray-800 rounded-xl text-sm font-semibold border border-beauty-soft dark:border-gray-700 shadow-sm">
               {products.length} produits
             </span>
-            <span className="px-3 py-1 bg-white rounded-lg text-sm font-medium border border-beauty-soft text-beauty-accent">
-              <TrendingUp size={14} className="inline mr-1" />
+            <span className="px-4 py-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-xl text-sm font-semibold border border-emerald-200 dark:border-emerald-700 flex items-center gap-1">
+              <TrendingUp size={14} />
               {masteredCount} maîtrisés
             </span>
-            <span className="px-3 py-1 bg-white rounded-lg text-sm font-medium border border-beauty-soft text-orange-600">
+            <span className="px-4 py-2 bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-xl text-sm font-semibold border border-orange-200 dark:border-orange-700">
               {learningCount} en apprentissage
             </span>
+            {favoriteCount > 0 && (
+              <span className="px-4 py-2 bg-pink-50 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-xl text-sm font-semibold border border-pink-200 dark:border-pink-700 flex items-center gap-1">
+                ❤️ {favoriteCount}
+              </span>
+            )}
           </div>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <select 
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-3 rounded-2xl bg-white border border-beauty-soft text-sm font-medium focus:outline-none focus:ring-2 focus:ring-beauty-accent/20"
-          >
-            <option value="name">Trier par: Nom</option>
-            <option value="price-asc">Trier par: Prix ↑</option>
-            <option value="price-desc">Trier par: Prix ↓</option>
-          </select>
         </div>
       </header>
 
-      <SearchBar onSearch={setQuery} onCategoryChange={setCategory} />
+      {/* Filters */}
+      <AdvancedFilterBar />
 
+      {/* Products grid */}
       {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {filteredProducts.map(product => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <ProductCard product={{
-                id: product.id,
-                name: product.name,
-                brand: product.brand,
-                category: product.category,
-                price: product.price,
-                summary: product.summary || '',
-                ingredients: product.ingredients || '',
-                benefits: product.benefits || '',
-                usage: product.usage || '',
-                targetSkin: product.target_skin || '',
-                contraindications: product.contraindications || '',
-                keyPoints: product.key_points || [],
-                notes: product.notes || '',
-                isFavorite: product.is_favorite,
-                learningStatus: product.learning_status,
-                imageUrl: product.image_url
-              }} />
-            </motion.div>
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <ProductCard product={product} />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Bulk actions bar */}
+          <BulkActionBar />
+        </>
       ) : (
-        <div className="text-center py-20 bg-white rounded-[32px] border border-dashed border-beauty-soft">
-          <p className="text-gray-400 font-medium italic">Aucun produit trouvé. Commencez par ajouter des produits!</p>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center py-20 bg-white dark:bg-gray-800 rounded-[32px] border-2 border-dashed border-beauty-soft dark:border-gray-700"
+        >
+          <Inbox className="w-20 h-20 text-gray-300 dark:text-gray-600 mx-auto mb-6" />
+          <p className="text-gray-500 dark:text-gray-400 font-medium text-lg mb-2">
+            Aucun produit trouvé
+          </p>
+          <p className="text-gray-400 dark:text-gray-500 text-sm mb-6">
+            Essayez d'ajuster vos filtres ou ajoutez un nouveau produit.
+          </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => window.location.href = '/add'}
+            className="px-8 py-4 bg-beauty-accent text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all"
+          >
+            + Ajouter un produit
+          </motion.button>
+        </motion.div>
       )}
     </div>
   );

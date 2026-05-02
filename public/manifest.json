@@ -1,0 +1,35 @@
+{
+  "name": "GlowGuide - Beauty Product Manager",
+  "short_name": "GlowGuide",
+  "description": "Gestionnaire de catalogue de produits cosmétiques pour professionnels",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fef7f0",
+  "theme_color": "#d97706",
+  "orientation": "any",
+  "categories": ["productivity", "business"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nouveau Produit",
+      "short_name": "Add",
+      "description": "Créer un nouveau produit",
+      "url": "/add",
+      "icons": [{ "src": "/icon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Catalogue",
+      "short_name": "Catalog",
+      "description": "Voir le catalogue",
+      "url": "/",
+      "icons": [{ "src": "/icon.svg", "sizes": "96x96" }]
+    }
+  ]
+}

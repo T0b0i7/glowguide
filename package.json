@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "dev:no-cache": "vite --port=3000 --host=0.0.0.0 --force"
   },
   "dependencies": {
     "@forge/ui": "^1.11.4",
@@ -20,8 +21,10 @@
     "@tailwindcss/vite": "^4.1.14",
     "@tessera-ui/react": "^0.6.3",
     "@vitejs/plugin-react": "^5.0.4",
+    "date-fns": "^4.1.0",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "immer": "^11.1.4",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.546.0",
@@ -29,6 +32,8 @@
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "react-router-dom": "^7.14.2",
+    "react-select": "^5.10.2",
+    "recharts": "^3.8.1",
     "vite": "^6.2.3"
   },
   "devDependencies": {

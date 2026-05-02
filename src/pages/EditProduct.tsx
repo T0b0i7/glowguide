@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, X, Camera } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useProducts } from '../context/ProductContext';
+import { useProducts, useNotifications } from '../context';
 import { imageService } from '../services/imageService';
 
 export const EditProduct: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products, updateProduct } = useProducts();
+  const { success, error: notifyError } = useNotifications();
   const [formData, setFormData] = useState({
     name: '',
     brand: '',
@@ -53,7 +54,7 @@ export const EditProduct: React.FC = () => {
     }
   }, [id, products]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     let imageUrl = currentImageUrl;
@@ -85,11 +86,13 @@ export const EditProduct: React.FC = () => {
           notes: formData.notes,
           image_url: imageUrl
         });
+        success('Produit mis à jour', 'Les modifications ont été sauvegardées');
         navigate(`/product/${id}`);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert('Erreur lors de la mise à jour du produit');
+      const message = error instanceof Error ? error.message : 'Erreur lors de la mise à jour du produit';
+      notifyError('Échec de la modification', message);
     }
   };
 

@@ -1,17 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
-interface ImportMetaEnv {
-  VITE_SUPABASE_URL: string;
-  VITE_SUPABASE_ANON_KEY: string;
-}
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-declare global {
-  interface ImportMeta {
-    env: ImportMetaEnv;
-  }
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase configuration missing: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required');
 }
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

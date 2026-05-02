@@ -1,0 +1,45 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_VERSION = "10"
+
+# Cache dependencies for faster builds
+[cache]
+  paths = [".npm", "node_modules"]
+
+# Environment variables (also set in Netlify UI)
+[context.production.environment]
+  VITE_SUPABASE_URL = "https://lwrtkomsbssnfganyklo.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "sb_publishable_MuiJXE9P7DAjDR9rFf4muQ_t4WhSdai"
+
+# Production context
+[context.production]
+
+# Deploy preview context
+[context.deploy-preview.environment]
+  VITE_SUPABASE_URL = "https://lwrtkomsbssnfganyklo.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "sb_publishable_MuiJXE9P7DAjDR9rFf4muQ_t4WhSdai"
+
+# Branch deploy context
+[context.branch-deploy.environment]
+  VITE_SUPABASE_URL = "https://lwrtkomsbssnfganyklo.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "sb_publishable_MuiJXE9P7DAjDR9rFf4muQ_t4WhSdai"
+
+# Handle SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
