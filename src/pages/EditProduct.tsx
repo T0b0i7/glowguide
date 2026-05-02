@@ -45,12 +45,12 @@ export const EditProduct: React.FC = () => {
           ingredients: product.ingredients || '',
           benefits: product.benefits || '',
           usage: product.usage || '',
-          targetSkin: product.target_skin || '',
+          targetSkin: product.targetSkin || '',
           contraindications: product.contraindications || '',
-          keyPoints: product.key_points?.join('\n') || '',
+          keyPoints: product.keyPoints?.join('\n') || '',
           notes: product.notes || ''
         });
-        setCurrentImageUrl(product.image_url || '');
+        setCurrentImageUrl(product.imageUrl || '');
       }
     }
   }, [id, products]);
@@ -82,11 +82,11 @@ export const EditProduct: React.FC = () => {
           ingredients: formData.ingredients,
           benefits: formData.benefits,
           usage: formData.usage,
-          target_skin: formData.targetSkin,
-          contraindications: formData.contraindications,
-          key_points: formData.keyPoints.split('\n').filter(p => p.trim()),
-          notes: formData.notes,
-          image_url: imageUrl
+targetSkin: formData.targetSkin,
+        contraindications: formData.contraindications,
+        keyPoints: formData.keyPoints.split('\n').filter(p => p.trim()),
+        notes: formData.notes,
+        imageUrl: imageUrl
         });
         toast.success('Produit mis à jour avec succès');
         navigate(`/product/${id}`);

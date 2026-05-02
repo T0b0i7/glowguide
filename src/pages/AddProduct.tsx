@@ -57,11 +57,11 @@ export const AddProduct: React.FC = () => {
         ingredients: formData.ingredients,
         benefits: formData.benefits,
         usage: formData.usage,
-        target_skin: formData.targetSkin,
+        targetSkin: formData.targetSkin,
         contraindications: formData.contraindications,
-        key_points: formData.keyPoints.split('\n').filter(p => p.trim()),
+        keyPoints: formData.keyPoints.split('\n').filter(p => p.trim()),
         notes: formData.notes,
-        image_url: imageUrl
+        imageUrl: imageUrl
       });
       toast.success('Produit ajouté avec succès');
       navigate('/');
