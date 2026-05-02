@@ -43,7 +43,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ isOpen, onClos
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto min-h-screen"
         onClick={onClose}
       >
         <motion.div
@@ -51,7 +51,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ isOpen, onClos
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.9, y: 20, opacity: 0 }}
           onClick={e => e.stopPropagation()}
-          className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-7xl w-full overflow-hidden border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col"
+          className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-7xl w-full overflow-hidden border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col my-8"
         >
           {/* Header */}
           <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-beauty-soft/30 to-transparent flex justify-between items-center">
