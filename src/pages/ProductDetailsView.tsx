@@ -2,40 +2,36 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, AlertCircle, Info, Edit3, Heart, Target, Sparkles, Save, X, Camera } from 'lucide-react';
 import { motion } from 'motion/react';
-import { SupabaseProduct } from '../types';
-import { productService } from '../services/productService';
-import { useProducts } from '../context/ProductContext';
+import { Product } from '../types';
+import { useProducts } from '../context';
 import { useToast } from '../context/ToastContext';
 import { imageService } from '../services/imageService';
 
 export const ProductDetailsView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<SupabaseProduct | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { products, toggleFavorite, updateProduct } = useProducts();
+  const product = products.find(p => p.id === id) || null;
+  const [loading, setLoading] = useState(!product);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState<Partial<SupabaseProduct>>({});
+  const [formData, setFormData] = useState<Partial<Product>>({});
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const { toggleFavorite, updateProduct } = useProducts();
   const toast = useToast();
 
   useEffect(() => {
-    if (!id) return;
-    productService.getById(id)
-      .then(p => {
-        setProduct(p);
-        setFormData(p);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [id]);
+    if (product) {
+      setFormData(product);
+      setImagePreview(product.imageUrl || null);
+      setLoading(false);
+    }
+  }, [product]);
 
   const handleEdit = () => {
     if (product) {
       setFormData(product);
-      setImagePreview(product.image_url || null);
+      setImagePreview(product.imageUrl || null);
       setIsEditing(true);
     }
   };
@@ -64,7 +60,7 @@ export const ProductDetailsView: React.FC = () => {
     if (!product) return;
     try {
       await toggleFavorite(product.id);
-      toast.success(product.is_favorite ? 'Retiré des favoris' : 'Ajouté aux favoris');
+      toast.success(product.isFavorite ? 'Retiré des favoris' : 'Ajouté aux favoris');
     } catch (error) {
       toast.error('Erreur lors du changement de favori');
     }
@@ -75,7 +71,7 @@ export const ProductDetailsView: React.FC = () => {
     if (!id || !product) return;
 
     setIsUploading(true);
-    let imageUrl = product.image_url;
+    let imageUrl = product.imageUrl;
 
     if (selectedImage) {
       try {
@@ -102,7 +98,7 @@ export const ProductDetailsView: React.FC = () => {
           ? formData.key_points
           : (typeof formData.key_points === 'string' ? (formData.key_points as string).split('\n').filter(p => p.trim()) : []),
         notes: formData.notes,
-        image_url: imageUrl
+        imageUrl: imageUrl
       };
 
       await updateProduct(id, updates);
@@ -356,14 +352,14 @@ export const ProductDetailsView: React.FC = () => {
         >
           <div className="relative aspect-square rounded-[40px] overflow-hidden shadow-lg border border-beauty-soft">
             <img
-              src={product.image_url}
+              src={product.imageUrl}
               alt={product.name}
               className="w-full h-full object-cover"
             />
             <div className={`absolute top-4 sm:top-6 left-4 px-3 sm:px-4 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest ${
-              product.learning_status === 'maîtrisé' ? 'bg-beauty-muted text-gray-700' : 'bg-beauty-soft text-beauty-accent'
+              product.learningStatus === 'maîtrisé' ? 'bg-beauty-muted text-gray-700' : 'bg-beauty-soft text-beauty-accent'
             }`}>
-              {product.learning_status?.replace('-', ' ')}
+              {product.learningStatus?.replace('-', ' ')}
             </div>
           </div>
         </motion.div>
@@ -385,7 +381,7 @@ export const ProductDetailsView: React.FC = () => {
                 </button>
                 <button className="p-2 sm:p-3 rounded-full bg-white border border-beauty-soft text-beauty-accent shadow-sm hover:scale-110 transition-transform"
                   onClick={handleToggleFavorite}>
-                  <Heart size={20} sm:size={24} fill={product.is_favorite ? 'currentColor' : 'none'} />
+                  <Heart size={20} sm:size={24} fill={product.isFavorite ? 'currentColor' : 'none'} />
                 </button>
               </div>
             </div>
