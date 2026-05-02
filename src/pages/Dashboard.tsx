@@ -288,7 +288,7 @@ export const Dashboard: React.FC = () => {
                   className="flex items-center gap-4 p-4 rounded-xl bg-beauty-base dark:bg-gray-900/50 border border-beauty-soft dark:border-gray-700 hover:bg-beauty-soft dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <img
-                    src={product.image_url || 'https://via.placeholder.com/48'}
+                    src={product.image_url || 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=48'}
                     alt={product.name}
                     className="w-12 h-12 rounded-xl object-cover"
                   />

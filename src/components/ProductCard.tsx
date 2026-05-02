@@ -18,13 +18,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const selected = isSelected(product.id);
   const isInComparison = comparisonIds.includes(product.id);
 
-  const isNew = product.created_at && new Date(product.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const isNew = product.createdAt && new Date(product.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
   const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
       await toggleFavorite(product.id);
-      const action = product.is_favorite ? 'retiré des' : 'ajouté aux';
+      const action = product.isFavorite ? 'retiré des' : 'ajouté aux';
       favorite('Favoris', `${product.name} a été ${action} favoris`);
     } catch (err) {
       notifyError('Erreur favori', 'Impossible de modifier le statut favori');

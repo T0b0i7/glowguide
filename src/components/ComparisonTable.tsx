@@ -117,7 +117,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ isOpen, onClos
                         <th key={product.id} className="min-w-[250px] p-4">
                           <div className="flex flex-col items-center">
                             <img
-                              src={product.image_url || 'https://via.placeholder.com/80'}
+                              src={product.image_url || 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=80'}
                               alt={product.name}
                               className="w-16 h-16 rounded-xl object-cover mb-3 border-2 border-beauty-soft"
                             />

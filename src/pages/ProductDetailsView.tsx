@@ -13,11 +13,12 @@ import { useKeyboardShortcuts, KeyboardShortcutsHelp } from '../hooks/useKeyboar
 export const ProductDetailsView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { toggleFavorite, updateProduct } = useProducts();
+  const { products, toggleFavorite, updateProduct } = useProducts();
   const { success, error: notifyError } = useNotifications();
   const { tags } = useTags();
-  const [product, setProduct] = useState<SupabaseProduct | null>(null);
-  const [loading, setLoading] = useState(true);
+  
+  const product = products.find(p => p.id === id) || null;
+  const [loading, setLoading] = useState(!product);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Partial<SupabaseProduct>>({});
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -30,24 +31,18 @@ export const ProductDetailsView: React.FC = () => {
   useKeyboardShortcuts();
 
   useEffect(() => {
-    if (!id) return;
-    productService.getById(id)
-      .then(p => {
-        setProduct(p);
-        setFormData(p);
-      })
-      .catch(err => {
-        console.error('Failed to load product:', err);
-        notifyError('Erreur', 'Impossible de charger le produit');
-      })
-      .finally(() => setLoading(false));
-  }, [id, notifyError]);
+    if (product) {
+      setFormData(product as any);
+      setImagePreview(product.image_url || null);
+      setLoading(false);
+    }
+  }, [product]);
 
   const handleFavorite = async () => {
     if (!product) return;
     try {
       await toggleFavorite(product.id);
-      success('Favoris', product.is_favorite ? 'Retiré des favoris' : 'Ajouté aux favoris');
+      success('Favoris', product.isFavorite ? 'Retiré des favoris' : 'Ajouté aux favoris');
     } catch (err) {
       notifyError('Erreur', 'Impossible de modifier favori');
     }
@@ -451,12 +446,12 @@ export const ProductDetailsView: React.FC = () => {
             whileTap={{ scale: 0.95 }}
             onClick={handleFavorite}
             className={`p-3 rounded-xl shadow-md transition-colors ${
-              product.is_favorite
+              product.isFavorite
                 ? 'bg-gradient-to-br from-pink-400 to-rose-500 text-white'
                 : 'bg-white dark:bg-gray-800 border border-beauty-soft dark:border-gray-700 text-beauty-accent hover:bg-beauty-soft dark:hover:bg-gray-700'
             }`}
           >
-            <Heart size={24} fill={product.is_favorite ? 'currentColor' : 'none'} />
+            <Heart size={24} fill={product.isFavorite ? 'currentColor' : 'none'} />
           </motion.button>
         </div>
       </div>
@@ -477,7 +472,7 @@ export const ProductDetailsView: React.FC = () => {
         <div className="w-full lg:w-1/3">
           <div className="relative aspect-square rounded-[40px] overflow-hidden shadow-lg border-2 border-beauty-soft dark:border-gray-700 group">
             <img
-              src={product.image_url || 'https://via.placeholder.com/600'}
+              src={product.image_url || 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=600'}
               alt={product.name}
               className="w-full h-full object-cover"
             />
@@ -501,7 +496,7 @@ export const ProductDetailsView: React.FC = () => {
                 onClick={handleFavorite}
                 className="p-4 bg-white/20 backdrop-blur-md rounded-full text-white hover:scale-110 transition-transform"
               >
-                <Heart size={28} fill={product.is_favorite ? 'currentColor' : 'none'} />
+                <Heart size={28} fill={product.isFavorite ? 'currentColor' : 'none'} />
               </button>
               <button
                 onClick={handleEdit}
