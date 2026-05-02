@@ -23,18 +23,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onCategoryChange
         />
       </div>
       
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            id={`filter-${cat.toLowerCase()}`}
-            onClick={() => onCategoryChange(cat)}
-            className="whitespace-nowrap px-6 py-3 rounded-full bg-white border border-beauty-soft text-sm font-medium text-gray-600 hover:bg-beauty-soft hover:text-beauty-accent transition-all shadow-sm"
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              id={`filter-${cat.toLowerCase()}`}
+              onClick={() => onCategoryChange(cat)}
+              className="whitespace-nowrap px-4 py-2 sm:px-6 sm:py-3 rounded-full bg-white border border-beauty-soft text-sm font-medium text-gray-600 hover:bg-beauty-soft hover:text-beauty-accent transition-all shadow-sm flex-shrink-0"
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
     </div>
   );
 };

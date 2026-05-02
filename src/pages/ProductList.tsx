@@ -82,7 +82,7 @@ export const ProductList: React.FC = () => {
   }
 
   return (
-    <div id="product-list-page" className="max-w-7xl mx-auto px-6 py-10">
+    <div id="product-list-page" className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <motion.h1
