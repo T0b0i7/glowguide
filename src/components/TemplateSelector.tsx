@@ -29,25 +29,25 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelect, on
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.9, y: 20, opacity: 0 }}
           onClick={e => e.stopPropagation()}
-          className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-gray-200 dark:border-gray-700"
+          className="bg-white bg-gray-900 rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-gray-200 border-gray-700"
         >
           {/* Header */}
-          <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20">
+          <div className="px-8 py-6 border-b border-gray-200 border-gray-700 bg-gradient-to-r from-violet-50 to-purple-50 from-violet-900/20 to-purple-900/20">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center">
                   <Sparkles className="text-white" size={24} />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Templates de Produits</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <h2 className="text-2xl font-bold text-gray-900 text-white">Templates de Produits</h2>
+                  <p className="text-sm text-gray-600 text-gray-400">
                     Démarrer rapidement avec un modèle pré-rempli
                   </p>
                 </div>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-200 hover:bg-gray-700 rounded-full transition-colors"
               >
                 ✕
               </button>
@@ -58,9 +58,9 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelect, on
           <div className="p-8 space-y-4">
             {templates.length === 0 ? (
               <div className="text-center py-12">
-                <Sparkles className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400">Aucun template disponible</p>
-                <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                <Sparkles className="w-16 h-16 text-gray-300 text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-600 text-gray-400">Aucun template disponible</p>
+                <p className="text-sm text-gray-500 text-gray-500 mt-2">
                   Créez un produit et enregistrez-le comme template
                 </p>
               </div>
@@ -71,21 +71,21 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelect, on
                   return (
                     <div
                       key={template.id}
-                      className="border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden bg-white dark:bg-gray-800"
+                      className="border border-gray-200 border-gray-700 rounded-2xl overflow-hidden bg-white bg-gray-800"
                     >
                       <button
                         onClick={() => setExpanded(isExpanded ? null : template.id)}
-                        className="w-full px-6 py-5 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors text-left"
+                        className="w-full px-6 py-5 flex items-center justify-between hover:bg-gray-50 hover:bg-gray-700/50 transition-colors text-left"
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 rounded-xl flex items-center justify-center">
-                            <Sparkles className="text-violet-600 dark:text-violet-400" size={24} />
+                          <div className="w-14 h-14 bg-gradient-to-br from-violet-100 to-purple-100 from-violet-900/30 to-purple-900/30 rounded-xl flex items-center justify-center">
+                            <Sparkles className="text-violet-600 text-violet-400" size={24} />
                           </div>
                           <div>
-                            <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                            <h3 className="font-bold text-lg text-gray-900 text-white">
                               {template.name}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                            <p className="text-sm text-gray-600 text-gray-400">
                               Catégorie: {template.category}
                               {template.brand && ` • ${template.brand}`}
                             </p>
@@ -123,12 +123,12 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelect, on
                             transition={{ duration: 0.2 }}
                             className="overflow-hidden"
                           >
-                            <div className="px-6 pb-6 border-t border-gray-100 dark:border-gray-700 pt-4">
+                            <div className="px-6 pb-6 border-t border-gray-100 border-gray-700 pt-4">
                               <div className="grid grid-cols-2 gap-4">
                                 {template.defaultValues.price && (
                                   <div>
                                     <span className="text-xs font-semibold text-gray-500 uppercase">Prix</span>
-                                    <p className="text-lg font-bold text-gray-900 dark:text-white">
+                                    <p className="text-lg font-bold text-gray-900 text-white">
                                       {template.defaultValues.price.toLocaleString()} FCFA
                                     </p>
                                   </div>
@@ -138,7 +138,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelect, on
                                     <span className="text-xs font-semibold text-gray-500 uppercase">Points clés</span>
                                     <ul className="mt-1 space-y-1">
                                       {template.defaultValues.key_points.map((point: string, i: number) => (
-                                        <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                                        <li key={i} className="flex items-start gap-2 text-sm text-gray-700 text-gray-300">
                                           <Check size={14} className="text-emerald-500 mt-1 flex-shrink-0" />
                                           {point}
                                         </li>
@@ -149,7 +149,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({ onSelect, on
                                 {template.defaultValues.notes && (
                                   <div className="col-span-2">
                                     <span className="text-xs font-semibold text-gray-500 uppercase">Notes</span>
-                                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                                    <p className="text-sm text-gray-700 text-gray-300 mt-1">
                                       {template.defaultValues.notes}
                                     </p>
                                   </div>

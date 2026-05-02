@@ -5,60 +5,16 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Playfair Display", serif;
   
-  /* Light mode colors */
   --color-beauty-base: #fcfaf8;
   --color-beauty-soft: #fbe8e8;
   --color-beauty-accent: #d4a373;
   --color-beauty-muted: #e9edc9;
-  
-  /* Dark mode colors */
-  --color-dark-base: #0f0f0f;
-  --color-dark-soft: #1a1a1a;
-  --color-dark-accent: #fcd34d;
-  --color-dark-muted: #333333;
-}
-
-/* Dark mode setup */
-@variant dark {
-  --color-beauty-base: var(--color-dark-base);
-  --color-beauty-soft: var(--color-dark-soft);
-  --color-beauty-accent: var(--color-dark-accent);
-  --color-beauty-muted: var(--color-dark-muted);
 }
 
 body {
-  @apply bg-beauty-base text-gray-900 dark:text-white antialiased;
-  transition: background-color 0.3s, color 0.3s;
+  @apply bg-beauty-base text-gray-900 antialiased;
 }
 
 .font-display {
   font-family: var(--font-display);
 }
-
-/* Custom scrollbar for dark mode */
-.dark ::-webkit-scrollbar {
-  width: 8px;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #444;
-}
-
-/* Focus visible outline */
-*:focus-visible {
-  @apply outline-none ring-2 ring-beauty-accent ring-offset-2;
-}
-
-.dark *:focus-visible {
-  ring-offset-color: #0f0f0f;
-}
-

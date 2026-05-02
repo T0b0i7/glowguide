@@ -24,7 +24,7 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-beauty-soft dark:border-gray-700 px-6 py-4 transition-colors">
+    <nav className="sticky top-0 z-50 bg-white/80 bg-gray-900/80 backdrop-blur-md border-b border-beauty-soft border-gray-700 px-6 py-4 transition-colors">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
@@ -35,7 +35,7 @@ export const Navbar: React.FC = () => {
           >
             <Sparkles size={20} className="text-white" />
           </motion.div>
-          <span className="font-display text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <span className="font-display text-2xl font-bold tracking-tight text-gray-900 text-white">
             GlowGuide
           </span>
         </Link>
@@ -54,7 +54,7 @@ export const Navbar: React.FC = () => {
                 className={`relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
                   isActive
                     ? 'bg-beauty-accent text-white shadow-md'
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-beauty-soft dark:hover:bg-gray-800'
+                    : 'text-gray-600 text-gray-300 hover:bg-beauty-soft hover:bg-gray-800'
                 }`}
               >
                 <Icon size={18} />
@@ -64,7 +64,7 @@ export const Navbar: React.FC = () => {
           })}
 
           {/* Divider */}
-          <div className="w-px h-8 bg-gray-300 dark:bg-gray-700 mx-2" />
+          <div className="w-px h-8 bg-gray-300 bg-gray-700 mx-2" />
 
           {/* Action buttons */}
           <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export const Navbar: React.FC = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowComparison(true)}
-                className="relative px-4 py-2.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-xl font-semibold border-2 border-emerald-300 dark:border-emerald-700 hover:bg-emerald-200 dark:hover:bg-emerald-800/50 transition-all flex items-center gap-2"
+                className="relative px-4 py-2.5 bg-emerald-100 bg-emerald-900/30 text-emerald-700 text-emerald-300 rounded-xl font-semibold border-2 border-emerald-300 border-emerald-700 hover:bg-emerald-200 hover:bg-emerald-800/50 transition-all flex items-center gap-2"
               >
                 <GitCompare size={18} />
                 <span className="hidden sm:inline">Comparer</span>
@@ -90,7 +90,7 @@ export const Navbar: React.FC = () => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={toggleDarkMode}
-              className="p-2.5 rounded-xl bg-beauty-base dark:bg-gray-800 text-gray-600 dark:text-yellow-400 border border-beauty-soft dark:border-gray-700 hover:bg-beauty-soft dark:hover:bg-gray-700 transition-all"
+              className="p-2.5 rounded-xl bg-beauty-base bg-gray-800 text-gray-600 text-yellow-400 border border-beauty-soft border-gray-700 hover:bg-beauty-soft hover:bg-gray-700 transition-all"
               title={settings.darkMode ? 'Mode clair' : 'Mode sombre'}
             >
               {settings.darkMode ? <Sun size={20} /> : <Moon size={20} />}
@@ -100,7 +100,7 @@ export const Navbar: React.FC = () => {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setShowExportImport(true)}
-              className="p-2.5 rounded-xl bg-beauty-base dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-beauty-soft dark:border-gray-700 hover:bg-beauty-soft dark:hover:bg-gray-700 transition-all"
+              className="p-2.5 rounded-xl bg-beauty-base bg-gray-800 text-gray-600 text-gray-300 border border-beauty-soft border-gray-700 hover:bg-beauty-soft hover:bg-gray-700 transition-all"
               title="Exporter / Importer"
             >
               <Settings size={20} />

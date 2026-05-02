@@ -89,19 +89,19 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
           animate={{ scale: 1, y: 0, opacity: 1 }}
           exit={{ scale: 0.9, y: 20, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-gray-200 dark:border-gray-700"
+          className="bg-white bg-gray-900 rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-gray-200 border-gray-700"
         >
           {/* Header */}
-          <div className="px-8 py-6 border-b border-beauty-soft dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-beauty-soft/30 to-transparent">
+          <div className="px-8 py-6 border-b border-beauty-soft border-gray-700 flex justify-between items-center bg-gradient-to-r from-beauty-soft/30 to-transparent">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Export / Import</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              <h2 className="text-2xl font-bold text-gray-900 text-white">Export / Import</h2>
+              <p className="text-sm text-gray-600 text-gray-400 mt-1">
                 Sauvegardez ou restaurez vos données
               </p>
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 hover:bg-gray-800 rounded-full transition-colors"
             >
               ✕
             </button>
@@ -137,14 +137,14 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleExport}
-                className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-800/30 border-2 border-emerald-200 dark:border-emerald-700 hover:border-emerald-400 dark:hover:border-emerald-500 transition-all group"
+                className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100 from-emerald-900/30 to-emerald-800/30 border-2 border-emerald-200 border-emerald-700 hover:border-emerald-400 hover:border-emerald-500 transition-all group"
               >
                 <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
                   <Download size={28} />
                 </div>
                 <div className="text-center">
-                  <h3 className="font-bold text-emerald-800 dark:text-emerald-200">Exporter</h3>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-300">JSON complet</p>
+                  <h3 className="font-bold text-emerald-800 text-emerald-200">Exporter</h3>
+                  <p className="text-xs text-emerald-600 text-emerald-300">JSON complet</p>
                 </div>
               </motion.button>
 
@@ -153,14 +153,14 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
                 whileTap={{ scale: 0.98 }}
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isImporting}
-                className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all group disabled:opacity-50"
+                className="flex flex-col items-center gap-3 p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 from-blue-900/30 to-blue-800/30 border-2 border-blue-200 border-blue-700 hover:border-blue-400 hover:border-blue-500 transition-all group disabled:opacity-50"
               >
                 <div className="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform">
                   <Upload size={28} />
                 </div>
                 <div className="text-center">
-                  <h3 className="font-bold text-blue-800 dark:text-blue-200">Importer</h3>
-                  <p className="text-xs text-blue-600 dark:text-blue-300">Restauration</p>
+                  <h3 className="font-bold text-blue-800 text-blue-200">Importer</h3>
+                  <p className="text-xs text-blue-600 text-blue-300">Restauration</p>
                 </div>
               </motion.button>
             </div>
@@ -175,9 +175,9 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
             />
 
             {/* Warning */}
-            <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-xl">
-              <AlertTriangle className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" size={20} />
-              <div className="text-sm text-amber-800 dark:text-amber-200">
+            <div className="flex items-start gap-3 p-4 bg-amber-50 bg-amber-900/30 border border-amber-200 border-amber-700 rounded-xl">
+              <AlertTriangle className="text-amber-600 text-amber-400 flex-shrink-0 mt-0.5" size={20} />
+              <div className="text-sm text-amber-800 text-amber-200">
                 <p className="font-semibold mb-1">Attention</p>
                 <p>L'import remplace toutes les données actuelles. Assurez-vous d'avoir exporté une sauvegarde avant.</p>
               </div>
@@ -188,13 +188,13 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({ isOpen, on
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
-                className="p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-xl"
+                className="p-4 bg-green-50 bg-green-900/30 border border-green-200 border-green-700 rounded-xl"
               >
-                <div className="flex items-center gap-2 text-green-700 dark:text-green-300 font-semibold mb-2">
+                <div className="flex items-center gap-2 text-green-700 text-green-300 font-semibold mb-2">
                   <Check size={20} />
                   Fichier prêt à importer
                 </div>
-                <div className="text-sm text-green-600 dark:text-green-400 space-y-1">
+                <div className="text-sm text-green-600 text-green-400 space-y-1">
                   <p>{importPreview.productsCount} produits</p>
                   <p>{importPreview.tagsCount} tags</p>
                   <p>{importPreview.templatesCount} templates</p>
@@ -222,9 +222,9 @@ const TagIconAdapter: React.FC<{ size: number }> = ({ size }) => (
 const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: number; color: string }> = ({
   icon, label, value, color
 }) => (
-  <div className="bg-beauty-base dark:bg-gray-800 rounded-2xl p-4 text-center border border-beauty-soft dark:border-gray-700">
+  <div className="bg-beauty-base bg-gray-800 rounded-2xl p-4 text-center border border-beauty-soft border-gray-700">
     <div className={`${color} mb-2 flex justify-center`}>{icon}</div>
-    <div className="text-2xl font-bold text-gray-900 dark:text-white">{value}</div>
-    <div className="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wider">{label}</div>
+    <div className="text-2xl font-bold text-gray-900 text-white">{value}</div>
+    <div className="text-xs text-gray-600 text-gray-400 uppercase tracking-wider">{label}</div>
   </div>
 );

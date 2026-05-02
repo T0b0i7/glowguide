@@ -8,6 +8,7 @@ import { Dashboard } from './pages/Dashboard';
 import { AppProvider, useSettings } from './context';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { HistoryProvider } from './context/HistoryContext';
+import { ToastProvider } from './context/ToastContext';
 import { AnimatePresence } from 'motion/react';
 import { ThemeController } from './components/ThemeController';
 import { UndoRedoBar } from './components/UndoRedoBar';
@@ -40,8 +41,8 @@ function AppContent() {
 
       <UndoRedoBar />
 
-      <footer className="py-12 mt-20 border-t border-beauty-soft dark:border-gray-700 text-center">
-        <p className="text-gray-400 dark:text-gray-500 text-sm font-medium">
+      <footer className="py-12 mt-20 border-t border-beauty-soft border-gray-700 text-center">
+        <p className="text-gray-400 text-gray-500 text-sm font-medium">
           Conçu pour les Professionnels de la Beauté &bull; GlowGuide &copy; {new Date().getFullYear()}
         </p>
       </footer>
@@ -54,11 +55,13 @@ export default function App() {
     <NotificationProvider>
       <HistoryProvider>
         <AppProvider>
-          <Router>
-            <div className="min-h-screen bg-beauty-base dark:bg-gray-900 selection:bg-beauty-soft selection:text-beauty-accent transition-colors">
-              <AppContent />
-            </div>
-          </Router>
+          <ToastProvider>
+            <Router>
+              <div className="min-h-screen bg-beauty-base bg-gray-900 selection:bg-beauty-soft selection:text-beauty-accent transition-colors">
+                <AppContent />
+              </div>
+            </Router>
+          </ToastProvider>
         </AppProvider>
       </HistoryProvider>
     </NotificationProvider>

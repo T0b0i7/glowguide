@@ -94,10 +94,10 @@ export const Dashboard: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="font-display text-5xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="font-display text-5xl font-bold text-gray-900 text-white mb-2">
           Dashboard
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 font-medium mb-10">
+        <p className="text-gray-600 text-gray-400 font-medium mb-10">
           Analyse et insights de votre catalogue
         </p>
 
@@ -139,9 +139,9 @@ export const Dashboard: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 rounded-[32px] p-8 border border-beauty-soft dark:border-gray-700 shadow-lg"
+            className="bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
           >
-            <h3 className="font-display text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
               Répartition par Catégorie
             </h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -187,9 +187,9 @@ export const Dashboard: React.FC = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 rounded-[32px] p-8 border border-beauty-soft dark:border-gray-700 shadow-lg"
+            className="bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
           >
-            <h3 className="font-display text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
               Top Marques
             </h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -214,9 +214,9 @@ export const Dashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-gray-800 rounded-[32px] p-8 border border-beauty-soft dark:border-gray-700 shadow-lg"
+            className="bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
           >
-            <h3 className="font-display text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
               Statut d'Apprentissage
             </h3>
             <div className="grid grid-cols-3 gap-4 mb-6">
@@ -225,7 +225,7 @@ export const Dashboard: React.FC = () => {
                 return (
                   <div
                     key={status.name}
-                    className={`p-4 rounded-2xl text-center ${config?.color || 'bg-gray-100 dark:bg-gray-700'}`}
+                    className={`p-4 rounded-2xl text-center ${config?.color || 'bg-gray-100 bg-gray-700'}`}
                   >
                     <div className="text-3xl font-bold mb-1">{status.value}</div>
                     <div className="text-sm font-medium opacity-80">{status.name}</div>
@@ -249,9 +249,9 @@ export const Dashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white dark:bg-gray-800 rounded-[32px] p-8 border border-beauty-soft dark:border-gray-700 shadow-lg"
+            className="bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
           >
-            <h3 className="font-display text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
               Distribution des Prix
             </h3>
             <ResponsiveContainer width="100%" height={300}>
@@ -276,16 +276,16 @@ export const Dashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-[32px] p-8 border border-beauty-soft dark:border-gray-700 shadow-lg"
+            className="lg:col-span-2 bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
           >
-            <h3 className="font-display text-2xl font-bold text-gray-900 dark:text-white mb-6">
+            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
               Activité Récente
             </h3>
             <div className="space-y-4">
               {recentActivity.map(product => (
                 <div
                   key={product.id}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-beauty-base dark:bg-gray-900/50 border border-beauty-soft dark:border-gray-700 hover:bg-beauty-soft dark:hover:bg-gray-700/50 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-xl bg-beauty-base bg-gray-900/50 border border-beauty-soft border-gray-700 hover:bg-beauty-soft hover:bg-gray-700/50 transition-colors"
                 >
                   <img
                     src={product.image_url || 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=48'}
@@ -293,10 +293,10 @@ export const Dashboard: React.FC = () => {
                     className="w-12 h-12 rounded-xl object-cover"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 dark:text-white truncate">
+                    <p className="font-semibold text-gray-900 text-white truncate">
                       {product.name}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-600 text-gray-400">
                       {product.brand} • {product.category}
                     </p>
                   </div>
@@ -304,7 +304,7 @@ export const Dashboard: React.FC = () => {
                     <p className="font-bold text-beauty-accent">
                       {product.price.toLocaleString()} FCFA
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-500">
+                    <p className="text-xs text-gray-500 text-gray-500">
                       {product.updated_at
                         ? new Date(product.updated_at).toLocaleDateString()
                         : 'Non modifié'}
@@ -329,13 +329,13 @@ const StatCard: React.FC<{
 }> = ({ icon, label, value, trend, color }) => (
   <motion.div
     whileHover={{ y: -4 }}
-    className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-beauty-soft dark:border-gray-700 shadow-lg"
+    className="bg-white bg-gray-800 rounded-2xl p-6 border border-beauty-soft border-gray-700 shadow-lg"
   >
     <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${color} text-white mb-4`}>
       {icon}
     </div>
-    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">{label}</p>
-    <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
+    <p className="text-sm text-gray-600 text-gray-400 font-medium mb-1">{label}</p>
+    <p className="text-2xl font-bold text-gray-900 text-white">{value}</p>
     {trend && (
       <div className={`flex items-center gap-1 mt-2 text-sm ${trend === 'up' ? 'text-emerald-600' : 'text-red-600'}`}>
         {trend === 'up' ? <ArrowUp size={14} /> : <ArrowDown size={14} />}

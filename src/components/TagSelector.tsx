@@ -29,7 +29,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
             className={`
               inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all
               ${isSelected
-                ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900 scale-105'
+                ? 'ring-2 ring-offset-2 ring-offset-white ring-offset-gray-900 scale-105'
                 : 'opacity-70 hover:opacity-100 hover:scale-105'
               }
             `}
@@ -70,7 +70,7 @@ const AddTagButton: React.FC<{ onAdd: (name: string) => void }> = ({ onAdd }) =>
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-gray-200 bg-gray-700 text-gray-600 text-gray-300 hover:bg-gray-300 hover:bg-gray-600 transition-all"
       >
         <Plus size={12} />
         Tag
@@ -87,7 +87,7 @@ const AddTagButton: React.FC<{ onAdd: (name: string) => void }> = ({ onAdd }) =>
         onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAdd())}
         onBlur={() => { if (!value.trim()) setIsOpen(false); }}
         placeholder="Nouveau tag..."
-        className="px-3 py-1.5 rounded-full text-sm border border-beauty-soft dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-beauty-accent/20"
+        className="px-3 py-1.5 rounded-full text-sm border border-beauty-soft border-gray-600 bg-white bg-gray-800 text-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-beauty-accent/20"
         autoFocus
       />
       <button

@@ -181,7 +181,7 @@ const Toast: React.FC<{ notification: Notification; onDismiss: (id: string) => v
           whileTap={{ scale: 0.9 }}
           onClick={handleDismiss}
           className="flex-shrink-0 w-8 h-8 rounded-full
-            bg-black/5 hover:bg-black/10 dark:bg-white/20 dark:hover:bg-white/30
+            bg-black/5 hover:bg-black/10 bg-white/20 hover:bg-white/30
             flex items-center justify-center
             transition-colors duration-200"
         >

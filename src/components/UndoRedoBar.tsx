@@ -10,7 +10,7 @@ export const UndoRedoBar: React.FC = () => {
 
   return (
     <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2">
-      <div className="bg-gray-900 dark:bg-gray-800 rounded-full px-4 py-2 shadow-2xl border border-gray-700 flex items-center gap-2">
+      <div className="bg-gray-900 bg-gray-800 rounded-full px-4 py-2 shadow-2xl border border-gray-700 flex items-center gap-2">
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}

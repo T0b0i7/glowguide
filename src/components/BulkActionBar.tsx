@@ -50,7 +50,7 @@ export const BulkActionBar: React.FC = () => {
         exit={{ y: 100, opacity: 0 }}
         className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
       >
-        <div className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-gray-800 dark:to-gray-900 text-white rounded-2xl shadow-2xl border border-gray-700 p-4 flex items-center gap-4">
+        <div className="bg-gradient-to-r from-gray-900 to-gray-800 from-gray-800 to-gray-900 text-white rounded-2xl shadow-2xl border border-gray-700 p-4 flex items-center gap-4">
           {/* Selection info */}
           <div className="flex items-center gap-3 border-r border-gray-700 pr-4">
             <button
