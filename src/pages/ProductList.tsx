@@ -72,7 +72,7 @@ export const ProductList: React.FC = () => {
       <div className="flex items-center justify-center h-[60vh]">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-beauty-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500 text-gray-400 font-medium">Chargement des produits...</p>
+          <p className="text-beauty-text font-medium">Chargement des produits...</p>
         </div>
       </div>
     );
@@ -104,17 +104,17 @@ export const ProductList: React.FC = () => {
           <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="font-display text-5xl font-bold text-gray-900 text-white mb-2"
+            className="font-display text-5xl font-bold text-beauty-dark mb-2"
           >
             Catalogue Produits
           </motion.h1>
-          <p className="text-gray-600 text-gray-400 font-medium">
+          <p className="text-beauty-text font-medium">
             Explorez et gérez votre base de connaissances cosmétiques.
           </p>
 
           {/* Stats */}
           <div className="flex flex-wrap items-center gap-3 mt-4">
-            <span className="px-4 py-2 bg-white bg-gray-800 rounded-xl text-sm font-semibold border border-beauty-soft border-gray-700 shadow-sm">
+            <span className="px-4 py-2 bg-white rounded-xl text-sm font-semibold border border-beauty-sand shadow-sm">
               {products.length} produits
             </span>
             <span className="px-4 py-2 bg-emerald-50 bg-emerald-900/30 text-emerald-700 text-emerald-300 rounded-xl text-sm font-semibold border border-emerald-200 border-emerald-700 flex items-center gap-1">
@@ -134,16 +134,16 @@ export const ProductList: React.FC = () => {
         
         {/* View Mode & Sort */}
         <div className="flex items-center gap-4">
-          <div className="flex bg-white bg-gray-800 rounded-xl border border-beauty-soft border-gray-700 p-1">
+          <div className="flex bg-white rounded-xl border border-beauty-sand p-1">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-beauty-accent text-white' : 'text-gray-500 hover:text-beauty-accent'}`}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-beauty-accent text-white' : 'text-beauty-text hover:text-beauty-accent'}`}
             >
               <Grid size={20} />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-beauty-accent text-white' : 'text-gray-500 hover:text-beauty-accent'}`}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-beauty-accent text-white' : 'text-beauty-text hover:text-beauty-accent'}`}
             >
               <List size={20} />
             </button>
@@ -181,7 +181,7 @@ export const ProductList: React.FC = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleLoadMore}
                 disabled={isLoadingMore}
-                className="px-8 py-4 bg-white bg-gray-800 text-gray-700 text-gray-200 font-semibold rounded-2xl border border-beauty-soft border-gray-700 hover:border-beauty-accent hover:text-beauty-accent transition-all flex items-center gap-2 mx-auto"
+                className="px-8 py-4 bg-white text-beauty-text font-semibold rounded-2xl border border-beauty-sand hover:border-beauty-accent hover:text-beauty-accent transition-all flex items-center gap-2 mx-auto"
               >
                 {isLoadingMore ? (
                   <>
@@ -199,7 +199,7 @@ export const ProductList: React.FC = () => {
           )}
 
           {/* Results count */}
-          <div className="text-center mt-6 text-gray-500 text-gray-400 text-sm">
+          <div className="text-center mt-6 text-beauty-text/60 text-sm">
             Affichage de {displayedProducts.length} sur {filteredProducts.length} produits
           </div>
 
@@ -210,13 +210,13 @@ export const ProductList: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-20 bg-white bg-gray-800 rounded-[32px] border-2 border-dashed border-beauty-soft border-gray-700"
+          className="text-center py-20 bg-white rounded-[32px] border-2 border-dashed border-beauty-sand"
         >
-          <Inbox className="w-20 h-20 text-gray-300 text-gray-600 mx-auto mb-6" />
-          <p className="text-gray-500 text-gray-400 font-medium text-lg mb-2">
+          <Inbox className="w-20 h-20 text-beauty-text/30 mx-auto mb-6" />
+          <p className="text-beauty-text font-medium text-lg mb-2">
             Aucun produit trouvé
           </p>
-          <p className="text-gray-400 text-gray-500 text-sm mb-6">
+          <p className="text-beauty-text/60 text-sm mb-6">
             Essayez d'ajuster vos filtres ou ajoutez un nouveau produit.
           </p>
           <motion.button

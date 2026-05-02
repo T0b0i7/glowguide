@@ -2,27 +2,25 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, Legend, AreaChart, Area
+  PieChart, Pie, Cell
 } from 'recharts';
-import { TrendingUp, DollarSign, Package, Heart, Calendar, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { TrendingUp, Package, Heart, Star } from 'lucide-react';
 import { useProducts } from '../context';
-import { categories, learningStatuses, brands } from '../data/categories';
 
 export const Dashboard: React.FC = () => {
   const { products } = useProducts();
 
-  // Calculate stats
   const stats = useMemo(() => {
     const total = products?.length || 0;
     const totalValue = products?.reduce((sum, p) => sum + p.price, 0) || 0;
     const avgPrice = total > 0 ? totalValue / total : 0;
-    const favorites = products?.filter(p => p.is_favorite).length || 0;
-    const mastered = products?.filter(p => p.learning_status === 'maîtrisé').length || 0;
+    const favorites = products?.filter(p => p.isFavorite).length || 0;
+    const mastered = products?.filter(p => p.learningStatus === 'maîtrisé').length || 0;
+    const learning = products?.filter(p => p.learningStatus === 'en-cours').length || 0;
 
-    return { total, totalValue, avgPrice, favorites, mastered };
+    return { total, totalValue, avgPrice, favorites, mastered, learning };
   }, [products]);
 
-  // Category distribution
   const categoryData = useMemo(() => {
     const counts: Record<string, number> = {};
     products.forEach(p => {
@@ -33,7 +31,15 @@ export const Dashboard: React.FC = () => {
       .sort((a, b) => b.value - a.value);
   }, [products]);
 
-  // Brand distribution (top 5)
+  const statusData = useMemo(() => {
+    const counts = { 'maîtrisé': 0, 'en-cours': 0, 'à-apprendre': 0 };
+    products.forEach(p => {
+      const status = p.learningStatus || 'à-apprendre';
+      counts[status as keyof typeof counts]++;
+    });
+    return Object.entries(counts).map(([name, value]) => ({ name, value }));
+  }, [products]);
+
   const brandData = useMemo(() => {
     const counts: Record<string, number> = {};
     products.forEach(p => {
@@ -45,302 +51,116 @@ export const Dashboard: React.FC = () => {
       .slice(0, 5);
   }, [products]);
 
-  // Learning status distribution
-  const statusData = useMemo(() => {
-    const counts: Record<string, number> = {
-      'à-apprendre': 0,
-      'en-cours': 0,
-      'maîtrisé': 0
-    };
-    products.forEach(p => {
-      const status = p.learning_status || 'à-apprendre';
-      counts[status] = (counts[status] || 0) + 1;
-    });
-    return Object.entries(counts).map(([name, value]) => ({
-      name: learningStatuses.find(s => s.value === name)?.label || name,
-      value
-    }));
-  }, [products]);
-
-  // Price distribution by ranges
-  const priceRanges = useMemo(() => {
-    const ranges = [
-      { label: '< 5k', min: 0, max: 5000, count: 0 },
-      { label: '5k-10k', min: 5000, max: 10000, count: 0 },
-      { label: '10k-20k', min: 10000, max: 20000, count: 0 },
-      { label: '20k-50k', min: 20000, max: 50000, count: 0 },
-      { label: '> 50k', min: 50000, max: Infinity, count: 0 }
-    ];
-    products.forEach(p => {
-      const range = ranges.find(r => p.price >= r.min && p.price < r.max);
-      if (range) range.count++;
-    });
-    return ranges;
-  }, [products]);
-
-  // Recent activity (mock - would come from backend)
-  const recentActivity = useMemo(() => {
-    return [...products]
-      .sort((a, b) => (b.updated_at || b.created_at || '').localeCompare(a.updated_at || a.created_at || ''))
-      .slice(0, 5);
-  }, [products]);
-
-  // Colors
-  const COLORS = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
+  const COLORS = ['#C9A96E', '#B08D74', '#6B8E78', '#8b5cf6', '#06b6d4'];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <h1 className="font-display text-5xl font-bold text-gray-900 text-white mb-2">
+    <div className="max-w-7xl mx-auto px-6 py-12">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <h1 className="font-display text-5xl font-bold text-beauty-dark mb-2">
           Dashboard
         </h1>
-        <p className="text-gray-600 text-gray-400 font-medium mb-10">
+        <p className="text-beauty-text font-medium mb-10">
           Analyse et insights de votre catalogue
         </p>
 
         {/* Stats cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <StatCard
-            icon={<Package size={24} />}
-            label="Produits"
-            value={stats.total}
-            trend={null}
-            color="from-blue-500 to-cyan-500"
-          />
-          <StatCard
-            icon={<DollarSign size={24} />}
-            label="Valeur Totale"
-            value={`${stats.totalValue.toLocaleString()} FCFA`}
-            trend={null}
-            color="from-emerald-500 to-green-500"
-          />
-          <StatCard
-            icon={<Heart size={24} />}
-            label="Favoris"
-            value={`${stats.favorites} (${((stats.favorites / stats.total) * 100).toFixed(1)}%)`}
-            trend={null}
-            color="from-pink-500 to-rose-500"
-          />
-          <StatCard
-            icon={<TrendingUp size={24} />}
-            label="Maîtrisés"
-            value={`${stats.mastered} (${((stats.mastered / stats.total) * 100).toFixed(1)}%)`}
-            trend={null}
-            color="from-violet-500 to-purple-500"
-          />
+          <StatCard icon={<Package size={24} />} label="Total Produits" value={stats.total} color="bg-beauty-accent/20 text-beauty-accent" />
+          <StatCard icon={<TrendingUp size={24} />} label="Valeur Totale" value={`${stats.totalValue.toLocaleString()} Fcfa`} color="bg-beauty-success/20 text-beauty-success" />
+          <StatCard icon={<Heart size={24} />} label="Favoris" value={stats.favorites} color="bg-pink-100 text-pink-600" />
+          <StatCard icon={<Star size={24} />} label="Maîtrisés" value={stats.mastered} color="bg-emerald-100 text-emerald-600" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Category distribution */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
-          >
-            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
+          <div className="bg-white rounded-[32px] p-8 border border-beauty-sand shadow-lg">
+            <h3 className="font-display text-2xl font-bold text-beauty-dark mb-6">
               Répartition par Catégorie
             </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={(entry) => entry.name}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--color-bg)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: '12px'
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="flex flex-wrap gap-2 justify-center mt-4">
-              {categoryData.map((cat, i) => (
-                <span
-                  key={cat.name}
-                  className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                  style={{ backgroundColor: COLORS[i % COLORS.length] }}
-                >
-                  {cat.name}: {cat.value}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Top brands */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
-          >
-            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
-              Top Marques
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={brandData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" horizontal={false} />
-                <XAxis type="number" stroke="var(--color-muted)" />
-                <YAxis type="category" dataKey="name" stroke="var(--color-muted)" width={80} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--color-bg)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: '12px'
-                  }}
-                />
-                <Bar dataKey="value" fill="#8b5cf6" radius={[0, 8, 8, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </motion.div>
+            {categoryData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={categoryData} layout="vertical" margin={{ left: 20 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E8E0D8" />
+                  <XAxis type="number" stroke="#5C524F" />
+                  <YAxis dataKey="name" type="category" width={80} stroke="#5C524F" />
+                  <Tooltip contentStyle={{ background: '#FDFBF8', border: '1px solid #E8E0D8', borderRadius: 12 }} />
+                  <Bar dataKey="value" fill="#C9A96E" radius={[0, 8, 8, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-center py-12 text-beauty-text/60">Aucune donnée</div>
+            )}
+          </div>
 
           {/* Learning status */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
-          >
-            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
+          <div className="bg-white rounded-[32px] p-8 border border-beauty-sand shadow-lg">
+            <h3 className="font-display text-2xl font-bold text-beauty-dark mb-6">
               Statut d'Apprentissage
             </h3>
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              {statusData.map((status, i) => {
-                const config = learningStatuses.find(s => s.label === status.name);
-                return (
-                  <div
-                    key={status.name}
-                    className={`p-4 rounded-2xl text-center ${config?.color || 'bg-gray-100 bg-gray-700'}`}
+            {statusData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={statusData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value}`}
                   >
-                    <div className="text-3xl font-bold mb-1">{status.value}</div>
-                    <div className="text-sm font-medium opacity-80">{status.name}</div>
-                  </div>
-                );
-              })}
-            </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={statusData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-                <XAxis dataKey="name" stroke="var(--color-muted)" />
-                <YAxis stroke="var(--color-muted)" />
-                <Tooltip />
-                <Area type="monotone" dataKey="value" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.3} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </motion.div>
+                    {statusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ background: '#FDFBF8', border: '1px solid #E8E0D8', borderRadius: 12 }} />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="text-center py-12 text-beauty-text/60">Aucune donnée</div>
+            )}
+          </div>
+        </div>
 
-          {/* Price ranges */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
-          >
-            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
-              Distribution des Prix
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={priceRanges}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
-                <XAxis dataKey="label" stroke="var(--color-muted)" />
-                <YAxis stroke="var(--color-muted)" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'var(--color-bg)',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: '12px'
-                  }}
-                />
-                <Bar dataKey="count" fill="#06b6d4" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </motion.div>
-
-          {/* Recent activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="lg:col-span-2 bg-white bg-gray-800 rounded-[32px] p-8 border border-beauty-soft border-gray-700 shadow-lg"
-          >
-            <h3 className="font-display text-2xl font-bold text-gray-900 text-white mb-6">
-              Activité Récente
-            </h3>
-            <div className="space-y-4">
-              {recentActivity.map(product => (
-                <div
-                  key={product.id}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-beauty-base bg-gray-900/50 border border-beauty-soft border-gray-700 hover:bg-beauty-soft hover:bg-gray-700/50 transition-colors"
-                >
-                  <img
-                    src={product.image_url || 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=48'}
-                    alt={product.name}
-                    className="w-12 h-12 rounded-xl object-cover"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-white truncate">
-                      {product.name}
-                    </p>
-                    <p className="text-sm text-gray-600 text-gray-400">
-                      {product.brand} • {product.category}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-beauty-accent">
-                      {product.price.toLocaleString()} FCFA
-                    </p>
-                    <p className="text-xs text-gray-500 text-gray-500">
-                      {product.updated_at
-                        ? new Date(product.updated_at).toLocaleDateString()
-                        : 'Non modifié'}
-                    </p>
-                  </div>
+        {/* Top Brands */}
+        <div className="bg-white rounded-[32px] p-8 border border-beauty-sand shadow-lg">
+          <h3 className="font-display text-2xl font-bold text-beauty-dark mb-6">
+            Top Marques
+          </h3>
+          <div className="space-y-4">
+            {brandData.map((brand, index) => (
+              <div key={brand.name} className="flex items-center gap-4 p-4 rounded-xl bg-beauty-soft border border-beauty-sand hover:border-beauty-accent transition-colors">
+                <span className="w-8 h-8 bg-beauty-accent text-white rounded-full flex items-center justify-center font-bold text-sm">
+                  {index + 1}
+                </span>
+                <div className="flex-1">
+                  <p className="font-semibold text-beauty-dark">{brand.name}</p>
                 </div>
-              ))}
-            </div>
-          </motion.div>
+                <p className="font-bold text-beauty-accent">{brand.value} produits</p>
+              </div>
+            ))}
+            {brandData.length === 0 && (
+              <div className="text-center py-8 text-beauty-text/60">Aucune donnée</div>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>
   );
 };
 
-const StatCard: React.FC<{
-  icon: React.ReactNode;
-  label: string;
-  value: string | number;
-  trend?: 'up' | 'down' | null;
-  color: string;
-}> = ({ icon, label, value, trend, color }) => (
+const StatCard: React.FC<{ icon: React.ReactNode; label: string; value: string | number; color: string }> = ({ icon, label, value, color }) => (
   <motion.div
-    whileHover={{ y: -4 }}
-    className="bg-white bg-gray-800 rounded-2xl p-6 border border-beauty-soft border-gray-700 shadow-lg"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    whileHover={{ y: -5 }}
+    className="bg-white rounded-[32px] p-6 border border-beauty-sand shadow-lg hover:shadow-xl transition-all"
   >
-    <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${color} text-white mb-4`}>
+    <div className={`w-14 h-14 ${color} rounded-2xl flex items-center justify-center mb-4`}>
       {icon}
     </div>
-    <p className="text-sm text-gray-600 text-gray-400 font-medium mb-1">{label}</p>
-    <p className="text-2xl font-bold text-gray-900 text-white">{value}</p>
-    {trend && (
-      <div className={`flex items-center gap-1 mt-2 text-sm ${trend === 'up' ? 'text-emerald-600' : 'text-red-600'}`}>
-        {trend === 'up' ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
-        <span>vs mois dernier</span>
-      </div>
-    )}
+    <p className="text-sm text-beauty-text font-medium mb-1">{label}</p>
+    <p className="text-3xl font-bold text-beauty-dark">{value}</p>
   </motion.div>
 );
