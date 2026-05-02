@@ -1,14 +1,19 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ProductCard } from '../components/ProductCard';
 import { AdvancedFilterBar } from '../components/AdvancedFilterBar';
 import { BulkActionBar } from '../components/BulkActionBar';
 import { motion } from 'motion/react';
-import { TrendingUp, Inbox, Search } from 'lucide-react';
+import { TrendingUp, Inbox, Search, Grid, List, ChevronDown, Loader2 } from 'lucide-react';
 import { useProducts, useFilters } from '../context';
+
+const ITEMS_PER_PAGE = 12;
 
 export const ProductList: React.FC = () => {
   const { products, loading, error } = useProducts();
   const { filters } = useFilters();
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
@@ -46,6 +51,17 @@ export const ProductList: React.FC = () => {
       return a.name.localeCompare(b.name);
     });
   }, [products, filters]);
+
+  const displayedProducts = filteredProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredProducts.length;
+
+  const handleLoadMore = () => {
+    setIsLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount(prev => prev + ITEMS_PER_PAGE);
+      setIsLoadingMore(false);
+    }, 300);
+  };
 
   const masteredCount = products.filter(p => p.learning_status === 'maîtrisé').length;
   const learningCount = products.filter(p => p.learning_status === 'en-cours').length;
@@ -115,25 +131,76 @@ export const ProductList: React.FC = () => {
             )}
           </div>
         </div>
+        
+        {/* View Mode & Sort */}
+        <div className="flex items-center gap-4">
+          <div className="flex bg-white dark:bg-gray-800 rounded-xl border border-beauty-soft dark:border-gray-700 p-1">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-beauty-accent text-white' : 'text-gray-500 hover:text-beauty-accent'}`}
+            >
+              <Grid size={20} />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-beauty-accent text-white' : 'text-gray-500 hover:text-beauty-accent'}`}
+            >
+              <List size={20} />
+            </button>
+          </div>
+        </div>
       </header>
 
       {/* Filters */}
       <AdvancedFilterBar />
 
-      {/* Products grid */}
+      {/* Products grid/list */}
       {filteredProducts.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredProducts.map((product, index) => (
+          <div className={viewMode === 'grid' 
+            ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8' 
+            : 'space-y-4'}>
+            {displayedProducts.map((product, index) => (
               <motion.div
                 key={product.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.03 }}
+                className={viewMode === 'list' ? 'w-full' : ''}
               >
                 <ProductCard product={product} />
               </motion.div>
             ))}
+          </div>
+
+          {/* Load More / Pagination */}
+          {hasMore && (
+            <div className="text-center mt-12">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleLoadMore}
+                disabled={isLoadingMore}
+                className="px-8 py-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-semibold rounded-2xl border border-beauty-soft dark:border-gray-700 hover:border-beauty-accent hover:text-beauty-accent transition-all flex items-center gap-2 mx-auto"
+              >
+                {isLoadingMore ? (
+                  <>
+                    <Loader2 size={20} className="animate-spin" />
+                    Chargement...
+                  </>
+                ) : (
+                  <>
+                    Voir plus ({filteredProducts.length - visibleCount} restants)
+                    <ChevronDown size={20} />
+                  </>
+                )}
+              </motion.button>
+            </div>
+          )}
+
+          {/* Results count */}
+          <div className="text-center mt-6 text-gray-500 dark:text-gray-400 text-sm">
+            Affichage de {displayedProducts.length} sur {filteredProducts.length} produits
           </div>
 
           {/* Bulk actions bar */}

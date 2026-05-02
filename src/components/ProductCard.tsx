@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, ChevronRight, Bookmark, Trash, Edit3, Check, GripVertical, GitCompare } from 'lucide-react';
+import { Heart, ChevronRight, Bookmark, Trash, Edit3, Check, GripVertical, GitCompare, Sparkles } from 'lucide-react';
 import { Product } from '../types';
 import { motion } from 'motion/react';
 import { useProducts, useSelection, useNotifications, useComparison, useApp } from '../context';
@@ -17,6 +17,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { comparisonIds, addToComparison, removeFromComparison } = useComparison();
   const selected = isSelected(product.id);
   const isInComparison = comparisonIds.includes(product.id);
+
+  const isNew = product.created_at && new Date(product.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
   const handleFavorite = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -99,6 +101,29 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
+        
+        {/* Badges */}
+        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+          {isNew && (
+            <motion.span 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg flex items-center gap-1"
+            >
+              <Sparkles size={12} />
+              Nouveau
+            </motion.span>
+          )}
+          {product.isFavorite && (
+            <motion.span 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="px-3 py-1 bg-gradient-to-r from-pink-400 to-rose-500 text-white text-xs font-bold rounded-full shadow-lg"
+            >
+              ❤️ Favori
+            </motion.span>
+          )}
+        </div>
 
         {/* Overlay actions */}
         <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
