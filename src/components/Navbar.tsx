@@ -5,12 +5,15 @@ import { motion } from 'motion/react';
 import { useApp } from '../context';
 import { ExportImportModal } from './ExportImportModal';
 import { ComparisonTable } from './ComparisonTable';
+import { SettingsModal, useCatalogName } from './SettingsModal';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
   const { state } = useApp();
+  const catalogName = useCatalogName();
   const [showExportImport, setShowExportImport] = React.useState(false);
   const [showComparison, setShowComparison] = React.useState(false);
+  const [showSettings, setShowSettings] = React.useState(false);
 
   const navItems = [
     { name: 'Catalogue', path: '/', icon: BookOpen },
@@ -31,7 +34,7 @@ export const Navbar: React.FC = () => {
             <Sparkles size={20} className="text-white" />
           </motion.div>
           <span className="font-display text-2xl font-bold tracking-tight text-beauty-dark">
-            GlowGuide
+            {catalogName}
           </span>
         </Link>
 
@@ -81,15 +84,20 @@ export const Navbar: React.FC = () => {
 
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => setShowExportImport(true)}
+              onClick={() => setShowSettings(true)}
               className="p-2.5 rounded-xl bg-beauty-soft text-beauty-text border border-beauty-sand hover:bg-beauty-ecru hover:border-beauty-accent transition-all"
-              title="Exporter / Importer"
+              title="Paramètres"
             >
               <Settings size={20} />
             </motion.button>
           </div>
         </div>
       </div>
+
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
 
       <ExportImportModal
         isOpen={showExportImport}

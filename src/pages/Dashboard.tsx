@@ -1,27 +1,24 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
-import { TrendingUp, Package, Heart, Star, Edit2, Check, X } from 'lucide-react';
+import { TrendingUp, Package, Heart, Star } from 'lucide-react';
 import { useProducts } from '../context';
+import { useCatalogName } from '../components/SettingsModal';
 
 export const Dashboard: React.FC = () => {
   const { products } = useProducts();
-  const [catalogName, setCatalogName] = useState('GlowGuide');
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState('');
+  const catalogName = useCatalogName();
 
   const stats = useMemo(() => {
     const total = products?.length || 0;
     const totalValue = products?.reduce((sum, p) => sum + p.price, 0) || 0;
-    const avgPrice = total > 0 ? totalValue / total : 0;
     const favorites = products?.filter(p => p.isFavorite).length || 0;
     const mastered = products?.filter(p => p.learningStatus === 'maîtrisé').length || 0;
-    const learning = products?.filter(p => p.learningStatus === 'en-cours').length || 0;
 
-    return { total, totalValue, avgPrice, favorites, mastered, learning };
+    return { total, totalValue, favorites, mastered };
   }, [products]);
 
   const categoryData = useMemo(() => {
@@ -59,38 +56,9 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <div className="flex items-center gap-4 mb-2">
-          {isEditing ? (
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                className="font-display text-5xl font-bold text-beauty-dark bg-transparent border-b-2 border-beauty-accent focus:outline-none"
-                autoFocus
-              />
-              <button onClick={() => { setCatalogName(editName); setIsEditing(false); }} className="p-2 bg-beauty-success/20 text-beauty-success rounded-full hover:bg-beauty-success hover:text-white transition-all">
-                <Check size={20} />
-              </button>
-              <button onClick={() => setIsEditing(false)} className="p-2 bg-red-100 text-beauty-error rounded-full hover:bg-beauty-error hover:text-white transition-all">
-                <X size={20} />
-              </button>
-            </div>
-          ) : (
-            <>
-              <h1 className="font-display text-5xl font-bold text-beauty-dark">
-                {catalogName}
-              </h1>
-              <button
-                onClick={() => { setEditName(catalogName); setIsEditing(true); }}
-                className="p-2 text-beauty-text/40 hover:text-beauty-accent transition-colors"
-                title="Renommer le catalogue"
-              >
-                <Edit2 size={24} />
-              </button>
-            </>
-          )}
-        </div>
+        <h1 className="font-display text-5xl font-bold text-beauty-dark mb-2">
+          {catalogName}
+        </h1>
         <p className="text-beauty-text font-medium mb-10">
           Analyse et insights de votre catalogue
         </p>
