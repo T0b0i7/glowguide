@@ -54,12 +54,12 @@ export const Dashboard: React.FC = () => {
   const COLORS = ['#C9A96E', '#B08D74', '#6B8E78', '#8b5cf6', '#06b6d4'];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="font-display text-5xl font-bold text-beauty-dark mb-2">
+        <h1 className="font-display text-4xl sm:text-5xl font-bold text-beauty-dark mb-2">
           {catalogName}
         </h1>
-        <p className="text-beauty-text font-medium mb-10">
+        <p className="text-beauty-text font-medium mb-6 sm:mb-10 text-sm sm:text-base">
           Analyse et insights de votre catalogue
         </p>
 

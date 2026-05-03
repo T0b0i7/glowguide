@@ -18,37 +18,39 @@ export const AdvancedFilterBar: React.FC = () => {
     <div className="mb-8 space-y-4">
       {/* Main search bar */}
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+        <div className="w-full relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input
             type="text"
-            placeholder="Rechercher par nom ou marque..."
+            placeholder="Rechercher..."
             value={filters.search}
             onChange={(e) => setFilters({ search: e.target.value })}
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white bg-gray-800 border border-beauty-soft border-gray-700 text-gray-800 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 focus:border-beauty-accent transition-all"
+            className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white border border-beauty-soft text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 focus:border-beauty-accent transition-all text-sm sm:text-base shadow-sm"
           />
           {filters.search && (
             <button
               onClick={() => setFilters({ search: '' })}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
           )}
         </div>
 
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 sm:flex gap-3 w-full md:w-auto">
           {/* Category filter */}
-          <select
-            value={filters.category}
-            onChange={(e) => setFilters({ category: e.target.value })}
-            className="px-6 py-4 rounded-2xl bg-white bg-gray-800 border border-beauty-soft border-gray-700 text-gray-800 text-gray-200 font-semibold focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 cursor-pointer"
-          >
-            <option value="Tous">Toutes catégories</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
+          <div className="col-span-2 sm:col-span-1">
+            <select
+              value={filters.category}
+              onChange={(e) => setFilters({ category: e.target.value })}
+              className="w-full px-4 sm:px-6 py-4 rounded-2xl bg-white border border-beauty-soft text-gray-800 font-semibold focus:outline-none focus:ring-2 focus:ring-beauty-accent/20 cursor-pointer text-sm sm:text-base"
+            >
+              <option value="Tous">Toutes catégories</option>
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
 
           {/* Advanced toggle */}
           <motion.button
@@ -56,21 +58,20 @@ export const AdvancedFilterBar: React.FC = () => {
             whileTap={{ scale: 0.98 }}
             onClick={() => setShowAdvanced(!showAdvanced)}
             className={`
-              px-6 py-4 rounded-2xl font-semibold border transition-all flex items-center gap-2
+              flex-1 sm:flex-none px-4 sm:px-6 py-4 rounded-2xl font-semibold border transition-all flex items-center justify-center gap-2 text-sm sm:text-base
               ${hasActiveFilters || showAdvanced
                 ? 'bg-beauty-accent text-white border-beauty-accent'
-                : 'bg-white bg-gray-800 text-gray-700 text-gray-200 border-beauty-soft border-gray-700 hover:border-beauty-accent'
+                : 'bg-white text-gray-700 border-beauty-soft hover:border-beauty-accent'
               }
             `}
           >
-            <SlidersHorizontal size={20} />
-            Filtres
+            <SlidersHorizontal size={18} />
+            <span className="hidden xs:inline">Filtres</span>
             {hasActiveFilters && (
-              <span className="w-5 h-5 bg-white/30 rounded-full text-xs flex items-center justify-center">
+              <span className="w-5 h-5 bg-white/30 rounded-full text-[10px] flex items-center justify-center">
                 {Object.values(filters).filter(v => v !== '' && v !== 'Tous' && v !== null && v !== false && (Array.isArray(v) ? v.length > 0 : true)).length}
               </span>
             )}
-            <ChevronDown className={`transition-transform ${showAdvanced ? 'rotate-180' : ''}`} size={16} />
           </motion.button>
 
           {/* Clear all */}
@@ -79,17 +80,10 @@ export const AdvancedFilterBar: React.FC = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               onClick={resetFilters}
-              className="px-4 py-4 rounded-2xl bg-gray-100 bg-gray-700 text-gray-600 text-gray-300 hover:bg-gray-200 hover:bg-gray-600 transition-colors"
+              className="px-4 py-4 rounded-2xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors flex items-center justify-center"
             >
               <X size={20} />
             </motion.button>
-          )}
-
-          {/* Selection count */}
-          {selectedIds.length > 0 && (
-            <div className="px-4 py-4 rounded-2xl bg-pink-100 bg-pink-900/30 text-pink-700 text-pink-300 font-bold border border-pink-200 border-pink-800">
-              {selectedIds.length} sélectionné{selectedIds.length > 1 ? 's' : ''}
-            </div>
           )}
         </div>
       </div>

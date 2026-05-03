@@ -1,4 +1,4 @@
-import { SupabaseProduct } from '../types';
+import { Product } from '../types';
 
 const PRODUCTS_KEY = 'glowguide-products';
 const SETTINGS_KEY = 'glowguide-settings';
@@ -17,10 +17,10 @@ export interface AppSettings {
 }
 
 export interface HistoryAction {
-  type: 'create' | 'update' | 'delete' | 'favorite' | 'bulk';
+  type: 'create' | 'update' | 'delete' | 'favorite' | 'toggle_favorite' | 'bulk';
   productId?: string;
-  previousState?: Partial<SupabaseProduct>;
-  newState?: Partial<SupabaseProduct>;
+  previousState?: Partial<Product>;
+  newState?: Partial<Product>;
   timestamp: number;
 }
 
@@ -29,7 +29,7 @@ export interface ProductTemplate {
   name: string;
   category: string;
   brand?: string;
-  defaultValues: Partial<SupabaseProduct>;
+  defaultValues: Partial<Product>;
   icon?: string;
 }
 
@@ -42,7 +42,7 @@ export interface Tag {
 
 class StorageService {
   // Products
-  static getProducts(): SupabaseProduct[] {
+  static getProducts(): Product[] {
     try {
       const data = localStorage.getItem(PRODUCTS_KEY);
       return data ? JSON.parse(data) : [];
@@ -51,7 +51,7 @@ class StorageService {
     }
   }
 
-  static saveProducts(products: SupabaseProduct[]): void {
+  static saveProducts(products: Product[]): void {
     localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
   }
 
@@ -145,7 +145,7 @@ class StorageService {
         category: 'Crème',
         defaultValues: {
           price: 15000,
-          key_points: ['Hydratation intense', 'Texture légère', 'Convient à tous les types de peau'],
+          keyPoints: ['Hydratation intense', 'Texture légère', 'Convient à tous les types de peau'],
           notes: 'À personnaliser selon le produit'
         }
       },
@@ -155,7 +155,7 @@ class StorageService {
         category: 'Sérum',
         defaultValues: {
           price: 25000,
-          key_points: ['Rides visiblement réduites', 'Peau raffermie', 'Éclat restauré'],
+          keyPoints: ['Rides visiblement réduites', 'Peau raffermie', 'Éclat restauré'],
           notes: 'À personnaliser selon le produit'
         }
       },
@@ -165,7 +165,7 @@ class StorageService {
         category: 'Nettoyant',
         defaultValues: {
           price: 8000,
-          key_points: ['Nettoie en profondeur', 'Respecte la barrière cutanée', 'Sans sulfate'],
+          keyPoints: ['Nettoie en profondeur', 'Respecte la barrière cutanée', 'Sans sulfate'],
           notes: 'À personnaliser selon le produit'
         }
       }

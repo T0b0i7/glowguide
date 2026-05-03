@@ -115,12 +115,12 @@ export const EditProduct: React.FC = () => {
   return (
     <div id="edit-product-page" className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       <header className="mb-10 text-center">
-        <h1 className="font-display text-5xl font-bold text-gray-900 mb-2">Modifier le Produit</h1>
+        <h1 className="font-display text-4xl sm:text-5xl font-bold text-gray-900 mb-2">Modifier le Produit</h1>
         <p className="text-gray-500 font-medium">Mettez à jour les informations du produit.</p>
       </header>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <section className="bg-white p-6 sm:p-10 rounded-[40px] border border-beauty-soft shadow-sm space-y-6">
+        <section className="bg-white p-5 sm:p-10 rounded-[32px] sm:rounded-[40px] border border-beauty-soft shadow-sm space-y-6">
           <h3 className="font-display text-2xl font-bold text-gray-800 mb-4">Informations de base</h3>
 
           <div className="space-y-4">
@@ -212,7 +212,7 @@ export const EditProduct: React.FC = () => {
           </div>
         </section>
 
-        <section className="bg-white p-6 sm:p-10 rounded-[40px] border border-beauty-soft shadow-sm space-y-6">
+        <section className="bg-white p-5 sm:p-10 rounded-[32px] sm:rounded-[40px] border border-beauty-soft shadow-sm space-y-6">
           <h3 className="font-display text-2xl font-bold">Connaissances Approfondies</h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">

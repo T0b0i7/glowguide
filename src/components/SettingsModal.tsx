@@ -34,11 +34,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      updateSettings(localSettings);
-      setTimeout(() => {
-        setIsSaving(false);
-        onClose();
-      }, 500);
+      await updateSettings(localSettings);
+      setIsSaving(false);
+      onClose();
     } catch (error) {
       console.error('Failed to save settings:', error);
       setIsSaving(false);

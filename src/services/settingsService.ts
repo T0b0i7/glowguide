@@ -10,19 +10,17 @@ export const settingsService = {
         .from(SETTINGS_TABLE)
         .select('*')
         .eq('id', 1)
-        .single();
+        .maybeSingle(); // Plus robuste que single()
 
       if (error) {
-        if (error.code === 'PGRST116') { // Row not found
-          return null;
-        }
         console.error('Error fetching settings:', error);
         return null;
       }
 
+      if (!data) return null;
+
       return {
         catalogName: data.catalog_name,
-        // Add other settings if needed
       };
     } catch (err) {
       console.error('Failed to fetch settings from DB:', err);
@@ -35,21 +33,23 @@ export const settingsService = {
       const updateData: any = {};
       if (settings.catalogName !== undefined) updateData.catalog_name = settings.catalogName;
       
+      // On s'assure d'avoir l'ID 1 pour la ligne unique de réglages
       const { error } = await supabase
         .from(SETTINGS_TABLE)
-        .upsert({ id: 1, ...updateData, updated_at: new Date().toISOString() });
+        .upsert(
+          { id: 1, ...updateData, updated_at: new Date().toISOString() },
+          { onConflict: 'id' }
+        );
 
       if (error) {
-        // If it's a permission error, don't throw, just log it once
-        if (error.code === '42501' || error.message?.includes('permission')) {
-          console.warn('DB Settings Sync: Permission denied (check RLS policies)');
-          return;
-        }
+        console.error('Supabase Save Error:', error);
         throw error;
       }
+      
+      console.log('Settings successfully synced to Supabase');
     } catch (err) {
-      // Fail silently to avoid crashing the app, rely on localStorage fallback
-      console.warn('DB Settings Sync: Failed to save to Supabase, using local storage instead.');
+      console.warn('DB Settings Sync Failed. Keeping local changes only.', err);
+      // On ne jette pas d'erreur pour ne pas bloquer l'UI, mais on logge l'erreur précise
     }
   }
 };

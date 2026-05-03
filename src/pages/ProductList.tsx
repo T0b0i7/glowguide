@@ -104,28 +104,28 @@ export const ProductList: React.FC = () => {
           <motion.h1
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="font-display text-5xl font-bold text-beauty-dark mb-2"
+            className="font-display text-4xl sm:text-5xl font-bold text-beauty-dark mb-2"
           >
             Catalogue Produits
           </motion.h1>
-          <p className="text-beauty-text font-medium">
+          <p className="text-beauty-text font-medium text-xs sm:text-base max-w-xs sm:max-w-none">
             Explorez et gérez votre base de connaissances cosmétiques.
           </p>
 
           {/* Stats */}
-          <div className="flex flex-wrap items-center gap-3 mt-4">
-            <span className="px-4 py-2 bg-white rounded-xl text-sm font-semibold border border-beauty-sand shadow-sm">
+          <div className="flex overflow-x-auto no-scrollbar items-center gap-3 mt-4 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <span className="flex-shrink-0 px-4 py-2 bg-white rounded-xl text-xs sm:text-sm font-semibold border border-beauty-sand shadow-sm whitespace-nowrap">
               {products.length} produits
             </span>
-            <span className="px-4 py-2 bg-emerald-50 bg-emerald-900/30 text-emerald-700 text-emerald-300 rounded-xl text-sm font-semibold border border-emerald-200 border-emerald-700 flex items-center gap-1">
+            <span className="flex-shrink-0 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs sm:text-sm font-semibold border border-emerald-200 flex items-center gap-1 whitespace-nowrap">
               <TrendingUp size={14} />
               {masteredCount} maîtrisés
             </span>
-            <span className="px-4 py-2 bg-orange-50 bg-orange-900/30 text-orange-700 text-orange-300 rounded-xl text-sm font-semibold border border-orange-200 border-orange-700">
+            <span className="flex-shrink-0 px-4 py-2 bg-orange-50 text-orange-700 rounded-xl text-xs sm:text-sm font-semibold border border-orange-200 whitespace-nowrap">
               {learningCount} en apprentissage
             </span>
             {favoriteCount > 0 && (
-              <span className="px-4 py-2 bg-pink-50 bg-pink-900/30 text-pink-700 text-pink-300 rounded-xl text-sm font-semibold border border-pink-200 border-pink-700 flex items-center gap-1">
+              <span className="flex-shrink-0 px-4 py-2 bg-pink-50 text-pink-700 rounded-xl text-xs sm:text-sm font-semibold border border-pink-200 flex items-center gap-1 whitespace-nowrap">
                 ❤️ {favoriteCount}
               </span>
             )}

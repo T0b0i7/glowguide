@@ -89,12 +89,12 @@ export const AddProduct: React.FC = () => {
   return (
     <div id="add-product-page" className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
       <header className="mb-10 text-center">
-        <h1 className="font-display text-5xl font-bold text-gray-900 mb-2">Ajouter un Produit</h1>
+        <h1 className="font-display text-4xl sm:text-5xl font-bold text-gray-900 mb-2">Ajouter un Produit</h1>
         <p className="text-gray-500 font-medium">Contribuez à la base de connaissances en ajoutant un nouveau produit.</p>
       </header>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        <section className="bg-white p-6 sm:p-10 rounded-[40px] border border-beauty-soft shadow-sm space-y-6">
+        <section className="bg-white p-5 sm:p-10 rounded-[32px] sm:rounded-[40px] border border-beauty-soft shadow-sm space-y-6">
           <h3 className="font-display text-2xl font-bold text-gray-800 mb-4">Informations de base</h3>
 
           {/* Image Upload */}
@@ -198,7 +198,7 @@ export const AddProduct: React.FC = () => {
           </div>
         </section>
 
-        <section className="bg-white p-6 sm:p-10 rounded-[40px] border border-beauty-soft shadow-sm space-y-8">
+        <section className="bg-white p-5 sm:p-10 rounded-[32px] sm:rounded-[40px] border border-beauty-soft shadow-sm space-y-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-beauty-soft rounded-full flex items-center justify-center">
               <Info size={20} className="text-beauty-accent" />

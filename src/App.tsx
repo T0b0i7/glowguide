@@ -40,8 +40,8 @@ function AppContent() {
 
       <UndoRedoBar />
 
-      <footer className="py-12 mt-20 border-t border-beauty-sand text-center">
-        <p className="text-beauty-text/60 text-sm font-medium">
+      <footer className="py-8 sm:py-12 mt-12 sm:mt-20 border-t border-beauty-sand text-center px-4">
+        <p className="text-beauty-text/60 text-xs sm:text-sm font-medium">
           Conçu pour les Professionnels de la Beauté &bull; GlowGuide &copy; {new Date().getFullYear()}
         </p>
       </footer>
